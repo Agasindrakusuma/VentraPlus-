@@ -1,0 +1,30 @@
+{% load static %}
+{% load breadcrumb_tags %}
+
+<!-- <div class="btn btn-icon h-65px w-65px me-6 bg-transparent">
+</div> -->
+	<!--begin::Title-->
+	<h1 class="page-heading d-flex text-white fw-bolder fs-2 flex-column justify-content-center my-0">VentraPlus+ 
+	<!--begin::Description-->
+	<div class="d-flex align-items-center pt-1">
+		<!--begin::Breadcrumb-->
+		<ul class="breadcrumb breadcrumb-separatorless fw-semibold pt-5">
+			<!--begin::Item-->
+			<li class="breadcrumb-item text-white fs-6 fw-bold lh-1">
+				<a href="{% url 'admin:index_admin_dashboard' %}" class="text-white">
+					<i class="ki-outline ki-home text-white fs-6"></i>
+				</a>
+			</li>
+			<!--end::Item-->
+			<!--begin::Item-->
+			<li class="breadcrumb-item">
+				<i class="ki-outline ki-right fs-6 text-white mx-n1"></i>
+			</li>
+			<!--end::Item-->
+			<!--begin::Item-->
+			<li class="breadcrumb-item text-white fs-6 fw-bold lh-1">
+				{% breadcrumb %}
+			</li>			<!--end::Item-->
+		</ul>
+		<!--end::Breadcrumb-->
+	</div>

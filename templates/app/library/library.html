@@ -1,0 +1,151 @@
+{% extends 'app/layout/base.html' %}
+
+{% load static %}
+{% block main %}
+
+<!-- Start hero
+============================================= -->
+<div class="banner-area banner-style-two content-right navigation-custom-large zoom-effect overflow-hidden text-light">
+    <!-- Slider main container -->
+    <div class="banner-fade">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            {% for data_slider in dt_slider %}
+            <div class="swiper-slide banner-style-two">
+                <div class="banner-thumb bg-cover shadow dark" style="background: url({{ data_slider.background_slider.url}});"></div>
+                <div class="container">
+                    <div class="row align-center">
+                        <div class="col-xl-9 col-lg-7 pr-100 pr-md-15 pr-xs-15">
+                            <div class="content">
+                                <h4>INOVASI DIGITAL</h4>
+                                <h2><strong>Ventra<span style="color: blue;">PLUS+</span></strong></h2>
+                                <p class="wow fadeInUp">
+                                    Platform Digital dalam meningkatkan kinerja Dinas Perpustakaan dalam memberikan pelayanan, pengelolahan Perpustakaan serta meningkatkat minat baca dan explorasi bakat anak daerah di kabupaten Deiyai.
+                                </p>
+                                <div class="button">
+                                    <a class="btn circle btn-gradient btn-md radius animation" href="{% url 'app:karya_app' %}">Karya Anak Negeri</a>
+                                </div>
+                                <div class="shape-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>        
+</div>
+<!-- End hero-->
+
+  
+<!-- Start Portfolio 
+    ============================================= -->
+    <div class="portfolio-style-three-area mt-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2">
+                    <div class="site-heading text-center">
+                        <h4 class="sub-title">Kita Berkarya</h4>
+                        <h2 class="title" style="font-size: 38px; ">Biarkan mimpimu mengukir, pikiranmu mengalir dan tanganmu mewujudkannya</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt--100 mt-md--50 mt-xs--50 pb-50">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- karya -->
+                    <div class="row gutter-xl">
+                        <div class="project-thumb mt-lg-5">
+                            <div class="d-flex justify-content-between align-items-center mt-20">
+                                <h4 class="sub-title mb-0">Karya</h4>
+                                <a href="{% url 'app:karya_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                            </div>    
+                            <div class="row">
+                                <!-- popular -->
+                                 {% for karya in dt_karya|slice:":3" %}
+                                <div class="col-md-4 mt--80 mb-5">
+                                    <div class="portfolio-style-one wow fadeInUp" style="max-width: 400px; max-height: auto;">
+                                        <a href="{% url 'app:karya_details_app' karya.slug %}" class="cursor-target">
+                                            <div class="thumb-zoom position-relative">
+                                                <img class="img-reveal"  src="{{karya.cover.file.url}}" alt="Image Not Found">
+                                            </div>
+                                            <div class="pf-item-info">
+                                                <div class="content">
+                                                    <div class="pf-tags">
+                                                        <span>{{karya.kategori_id.nama_kategori}}</span>
+                                                        <span>{{ karya.created_at|date:"Y" }}</span>
+                                                    </div>
+                                                    <h2><a href="{% url 'app:karya_details_app' karya.slug %}">{{karya.judul_karya}}</a></h2>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- ebook -->
+                    <div class="team-style-one-items">
+                        <div class="d-flex justify-content-between align-items-center mt-20 mb-2">
+                            <h4 class="sub-title mb-0">E-BOOK</h4>
+                            <a href="{% url 'app:allbook_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                        </div>
+                        <div class="row">
+                            <!-- Single item -->
+                             {% for ebook in dt_ebook|slice:":4" %}
+                            <div class="col-xl-3 col-lg-4 mb-50">
+                               <div class="team-style-one-item">
+                                   <div class="thumb">
+                                       <img src="{{ ebook.cover.url }}" alt="Image Not Found">
+                                       
+                                   </div>
+                                   <div class="info">
+                                        <span>{{ ebook.penulis}}</span>
+                                  <h4><a href="{% url 'app:book_details_app' ebook.slug %}">{{ ebook.judul|safe }}</a></h4>
+                                   </div>
+                               </div>
+                            </div>
+                            {% endfor %}
+                           <!-- End Single item -->
+                       </div>
+                    </div>
+                    
+                    <!-- ecerpen -->
+                    <div class="team-style-one-items">
+                        <div class="d-flex justify-content-between align-items-center mt-60 mb-2">
+                            <h4 class="sub-title mb-0">E-CERPEN</h4>
+                            <a href="{% url 'app:allcerpen_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                        </div>
+                        <div class="row">
+                            <!-- Single item -->
+                             {% for cerpen in dt_ecerpen|slice:":4" %}
+                            <div class="col-xl-3 col-lg-4 mb-50">
+                               <div class="team-style-one-item">
+                                   <div class="thumb">
+                                       <img src="{{ cerpen.cover.url }}" alt="Image Not Found">
+                                       
+                                   </div>
+                                   <div class="info">
+                                        <span>{{ cerpen.penulis }}</span>
+                                  <h4><a href="{% url 'app:cerpen_details_app' cerpen.slug %}">{{ cerpen.judul|safe }}</a></h4>
+                                   </div>
+                               </div>
+                            </div>
+                            {% endfor %}
+                           <!-- End Single item -->
+                       </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- End Portfolio -->
+
+{% endblock main %}

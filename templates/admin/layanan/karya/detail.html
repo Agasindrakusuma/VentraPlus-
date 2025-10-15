@@ -1,0 +1,478 @@
+{% extends 'admin/layout/base.html' %}
+{% load static %}
+
+{% block main %}
+<div class="d-flex flex-column flex-column-fluid">
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Detail View-->
+        <div class="card">
+            <!--begin::Card header-->
+            <div class="card-header border-0 pt-6">
+                <div class="card-title">
+                    <h2>Detail Karya</h2>
+                </div>
+                <div class="card-toolbar">
+                    <a href="{% url 'admin:index_karya' %}" class="btn btn-light-primary">
+                        <i class="ki-outline ki-arrow-left fs-2"></i> Kembali
+                    </a>
+                </div>
+            </div>
+            <!--end::Card header-->
+            
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <div class="d-flex flex-column flex-xl-row">
+                    <!--begin::Sidebar-->
+                    <div class="flex-column flex-lg-row-auto w-100 w-xl-300px mb-10">
+                        <!--begin::Cover-->
+                        <div class="card mb-5 mb-xl-8">
+                            <div class="card-body text-center">
+                                {% if karya.cover %}
+                                    {% if karya.cover.jenis_file in 'jpg,jpeg,png,gif' %}
+                                        <img src="{{ karya.cover.file.url }}" 
+                                             alt="Cover" 
+                                             width="100%" 
+                                             style="max-height: 200px; object-fit: contain;"
+                                             class="rounded">
+                                    {% else %}
+                                        <div class="symbol symbol-100px">
+                                            <div class="symbol-label bg-light-primary">
+                                                <i class="ki-outline ki-file fs-2x text-primary"></i>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <img src="{% static 'admin/assets/media/svg/files/blank-image.svg' %}" 
+                                         width="100%" 
+                                         alt="No Image"
+                                         style="max-height: 200px; object-fit: contain;"
+                                         class="rounded">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!--end::Cover-->
+                        
+                        <!--begin::Basic Info-->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Informasi Dasar</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-bold text-gray-600">Judul</td>
+                                            <td>{{ karya.judul_karya }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-gray-600">Status</td>
+                                            <td>
+                                                {% if karya.tanggal_verifikasi %}
+                                                    <span class="badge badge-light-success">Terverifikasi</span>
+                                                {% else %}
+                                                    <span class="badge badge-light-warning">Menunggu</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-gray-600">Kategori</td>
+                                            <td>{{ karya.kategori_id.nama_kategori|default:"-" }}</td>
+                                        </tr>
+                                        {% if karya.alasan_penolakan %}
+                                        <tr>
+                                            <td class="fw-bold text-gray-600">Alasan Penolakan</td>
+                                            <td>{{ karya.alasan_penolakan }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Basic Info-->
+                    </div>
+                    <!--end::Sidebar-->
+                    
+                    <!--begin::Main Content-->
+                    <div class="flex-lg-row-fluid ms-lg-10">
+                        <!--begin::Tab Navigation-->
+                        <div class="card mb-5">
+                            <div class="card-body p-0">
+                                <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bold">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-active-primary active" data-bs-toggle="tab" href="#deskripsi-tab">Deskripsi</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-active-primary" data-bs-toggle="tab" href="#file-tab">File Karya</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-active-primary" data-bs-toggle="tab" href="#gallery-tab">Galeri</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--end::Tab Navigation-->
+                        
+                        <!--begin::Tab Content-->
+                        <div class="tab-content">
+                            <!--begin::Deskripsi Tab-->
+                            <div class="tab-pane fade show active" id="deskripsi-tab">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="fs-5 lh-2" style="max-height: 400px; overflow-y: auto;">
+                                            {{ karya.deskripsi_karya|safe }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Deskripsi Tab-->
+                            
+                            <!--begin::File Tab-->
+                            <div class="tab-pane fade" id="file-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h3>File Karya</h3>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="card-body">
+                                        {% if konten_files %}
+                                            <div class="accordion" id="pdfAccordion">
+                                                {% for file_obj in konten_files %}
+                                                    {% if file_obj.jenis_file == 'pdf' %}
+                                                        <div class="accordion-item mb-3 border rounded">
+                                                            <h2 class="accordion-header" id="heading-{{ forloop.counter }}">
+                                                                <button class="accordion-button collapsed" type="button" 
+                                                                        data-bs-toggle="collapse" 
+                                                                        data-bs-target="#collapse-{{ forloop.counter }}" 
+                                                                        aria-expanded="false" 
+                                                                        aria-controls="collapse-{{ forloop.counter }}">
+                                                                    <i class="ki-outline ki-file-pdf fs-2x text-danger me-3"></i>
+                                                                    <span class="fw-bold">{{ file_obj.nama_file }}</span>
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapse-{{ forloop.counter }}" 
+                                                                 class="accordion-collapse collapse" 
+                                                                 aria-labelledby="heading-{{ forloop.counter }}" 
+                                                                 data-bs-parent="#pdfAccordion">
+                                                                <div class="accordion-body p-0">
+                                                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light">
+                                                                        <span class="text-muted">{{ file_obj.file.size|filesizeformat }}</span>
+                                                                        <a href="{{ file_obj.file.url }}" class="btn btn-sm btn-light-primary" download>
+                                                                            <i class="ki-outline ki-download fs-2"></i> Unduh
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="border-top" style="height: 500px; overflow: auto;">
+                                                                        <div id="pdf-viewer-container-{{ forloop.counter }}" style="min-height: 100%;"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            
+                                            {% if jumlah_pdf == 0 %}
+                                                <div class="alert alert-warning">
+                                                    Tidak ada dokumen PDF yang diunggah
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::File Tab-->
+                            
+                            <!--begin::Gallery Tab-->
+                            <div class="tab-pane fade" id="gallery-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h3>Galeri Karya</h3>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="card-body">
+                                        {% if karya.gallery_files %}
+                                            <div class="row g-4">
+                                                {% for file_obj in karya.gallery_files %}
+                                                    {% if file_obj.jenis_file in 'jpg jpeg png gif mp4' %}
+                                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                                                            <div class="card shadow-sm h-100">
+                                                                <div class="card-body p-2">
+                                                                    <div class="gallery-media-container">
+                                                                        {% if file_obj.jenis_file == 'mp4' %}
+                                                                            <video class="gallery-media" controls>
+                                                                                <source src="{{ file_obj.file.url }}" type="video/mp4">
+                                                                                Browser Anda tidak mendukung video tag.
+                                                                            </video>
+                                                                        {% else %}
+                                                                            <img src="{{ file_obj.file.url }}" alt="{{ file_obj.nama_file }}" class="gallery-media">
+                                                                            <div class="gallery-overlay">
+                                                                                <a href="{{ file_obj.file.url }}" class="download-btn-overlay" download>
+                                                                                    <i class="ki-outline ki-download fs-5 me-1"></i> Unduh
+                                                                                </a>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card-footer text-center py-2">
+                                                                    <span class="text-muted small">{{ file_obj.nama_file|truncatechars:20 }}</span>
+                                                                    <a href="{{ file_obj.file.url }}" class="btn btn-sm btn-light-primary mt-1" download>
+                                                                        <i class="ki-outline ki-download fs-5"></i> Unduh
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                
+                                            {% if gallery_count == 0 %}
+                                                <div class="alert alert-warning mt-4">
+                                                    Tidak ada galeri yang diunggah.
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Gallery Tab-->
+                        </div>
+                        <!--end::Tab Content-->
+                        
+                        <!--begin::Actions-->
+                        <div class="card mt-5">
+                            <div class="card-footer d-flex justify-content-end">
+                                <a href="{% url 'admin:edit_karya' karya.karya_id %}" class="btn btn-primary me-3">
+                                    <i class="ki-outline ki-pencil fs-2"></i> Edit
+                                </a>
+                                <!-- Archive button if needed -->
+                            </div>
+                        </div>
+                        <!--end::Actions-->
+                    </div>
+                    <!--end::Main Content-->
+                </div>
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Detail View-->
+    </div>
+    <!--end::Content-->
+</div>
+{% endblock %}
+
+{% block js %}
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script>
+    // Set worker PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    
+    // Initialize PDF viewers when tab is shown
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileTab = document.getElementById('file-tab');
+        
+        // Load PDFs only when File tab is clicked
+        document.querySelector('[href="#file-tab"]').addEventListener('click', function() {
+            // Small delay to ensure tab is visible
+            setTimeout(initializePDFViewers, 300);
+        });
+        
+        function initializePDFViewers() {
+            {% if konten_files %}
+                {% for file_obj in konten_files %}
+                    {% if file_obj.jenis_file == 'pdf' %}
+                        const containerId = "pdf-viewer-container-{{ forloop.counter }}";
+                        const pdfUrl = "{{ file_obj.file.url }}";
+                        const container = document.getElementById(containerId);
+                        
+                        // Only initialize if not already loaded
+                        if (container && container.innerHTML === '') {
+                            container.innerHTML = `
+                                <div class="text-center p-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-3">Memuat dokumen...</p>
+                                </div>
+                            `;
+                            
+                            pdfjsLib.getDocument(pdfUrl).promise
+                                .then(function(pdf) {
+                                    container.innerHTML = '';
+                                    renderAllPages(pdf, container);
+                                })
+                                .catch(function(error) {
+                                    container.innerHTML = `
+                                        <div class="alert alert-danger m-3">
+                                            <p>Gagal memuat PDF. Silakan unduh file untuk melihat isinya.</p>
+                                            <a href="${pdfUrl}" class="btn btn-danger" download>
+                                                <i class="ki-outline ki-download fs-2"></i> Unduh PDF
+                                            </a>
+                                        </div>
+                                    `;
+                                    console.error('PDF.js error:', error);
+                                });
+                        }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        }
+        
+        function renderAllPages(pdfDoc, container) {
+            const scale = 1.2;
+            
+            // Render first 3 pages initially
+            const initialPages = Math.min(3, pdfDoc.numPages);
+            
+            for (let i = 1; i <= initialPages; i++) {
+                renderPage(pdfDoc, i, container, scale);
+            }
+            
+            // Add "Load More" button if there are more pages
+            if (pdfDoc.numPages > initialPages) {
+                const loadMoreBtn = document.createElement('button');
+                loadMoreBtn.className = 'btn btn-light-primary w-100 mt-3';
+                loadMoreBtn.innerHTML = '<i class="ki-outline ki-arrow-down fs-2"></i> Muat Lebih Banyak Halaman';
+                loadMoreBtn.onclick = function() {
+                    const currentPageCount = container.querySelectorAll('canvas').length + 1;
+                    const nextPages = Math.min(currentPageCount + 3, pdfDoc.numPages);
+                    
+                    for (let i = currentPageCount; i <= nextPages; i++) {
+                        renderPage(pdfDoc, i, container, scale);
+                    }
+                    
+                    if (nextPages >= pdfDoc.numPages) {
+                        loadMoreBtn.remove();
+                    }
+                };
+                
+                container.appendChild(loadMoreBtn);
+            }
+        }
+        
+        function renderPage(pdfDoc, pageNum, container, scale) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: scale });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.style.marginBottom = '15px';
+                canvas.style.display = 'block';
+                canvas.style.borderBottom = '1px solid #eee';
+                container.appendChild(canvas);
+                
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+                
+                // Add page number indicator
+                const pageNumDiv = document.createElement('div');
+                pageNumDiv.className = 'text-center text-muted small mb-3';
+                pageNumDiv.textContent = `Halaman ${pageNum}`;
+                container.appendChild(pageNumDiv);
+            });
+        }
+    });
+</script>
+
+<style>
+    /* Gallery styles */
+    .gallery-media-container {
+        aspect-ratio: 16/9;
+        width: 100%;
+        height: 200px; /* Ukuran tetap */
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        background-color: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .gallery-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Gambar/video akan crop sesuai container tapi tetap rapi */
+        display: block;
+    }
+    
+
+
+    .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+    }
+
+    .gallery-media-container:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .download-btn-overlay {
+        background-color: #ffffffdd;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .download-btn-overlay:hover {
+        background-color: #fff;
+        color: #0d6efd;
+    }
+    
+    /* Accordion styles */
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        box-shadow: none;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    
+    /* Tab styles */
+    .nav-tabs .nav-link {
+        padding: 1rem 1.5rem;
+    }
+    
+    /* Scrollbar styles */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,90 @@
+<form method="post" enctype="multipart/form-data" class="form" id="profileForm" action="{% if edit %}{% url 'admin:edit_master_pejabat' pejabat.pejabat_id %}{% else %}{% url 'admin:tambah_master_pejabat' %}{% endif %}">
+    {% csrf_token %}
+    <div class="d-flex flex-column scroll-y px-5 px-lg-10" data-kt-scroll="true">
+
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Nama Pejabat</label>
+            <input type="text" value="{{ pejabat.nama_pejabat }}" name="frm_nama_pejabat" class="form-control form-control-solid" placeholder="Nama Lengkap" required />
+        </div>
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Jabatan</label>
+            <select class="form-select form-select-transparent" name="frm_jabatan" data-control="select2" data-placeholder="Select an option">
+                <option></option>
+                {% for jabatan in dt_pejabat %}
+                    <option {% if edit %}{% if pejabat.jabatan == jabatan.0 %} selected {% endif %}{% endif %} value="{{ jabatan.0 }}">{{ jabatan.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>        
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Deskripsi</label>
+            
+            <div id="toolbar-container">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1">Heading 1</option>
+                        <option value="2">Heading 2</option>
+                        <option selected>Normal</option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                </span>
+            </div>
+            
+            <div id="editor-container" style="height: 200px; background-color: white;">
+                {% if edit %}{{ pejabat.deskripsi|safe }}{% endif %}
+            </div>
+            
+            <input type="hidden" id="frm_deskripsi" name="frm_deskripsi" required>
+            <div class="text-muted fs-7 mt-2">Tulis deskripsi lengkap di sini.</div>
+        </div>
+
+    <div class="text-center pt-10">
+        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+</div>
+</form>
+
+
+<script>
+    // Inisialisasi Quill
+    const quill = new Quill('#editor-container', {
+        modules: { toolbar: '#toolbar-container' },
+        theme: 'snow',
+        placeholder: 'Tulis deskripsi di sini...'
+    });
+
+    // Handler submit form
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const editorContent = document.querySelector('.ql-editor').innerHTML;
+        document.getElementById('frm_deskripsi').value = editorContent;
+        
+        // Validasi konten
+        if (editorContent.trim() === '<p><br></p>' || editorContent.trim() === '') {
+            alert('Deskripsi tidak boleh kosong');
+            return false;
+        }
+        
+        // Submit form secara manual
+        this.submit();
+        
+        // Nonaktifkan tombol submit untuk menghindari double submit
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('submitBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...';
+    });
+</script>

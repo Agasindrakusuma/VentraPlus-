@@ -1,0 +1,22 @@
+{% load static %}
+
+{% block scripts %}
+<script>var hostUrl = "assets/";</script>
+		<!--begin::Global Javascript Bundle(mandatory for all pages)-->
+		<script src="{% static 'admin/assets/plugins/global/plugins.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/js/scripts.bundle.js' %}"></script>
+		<!--end::Global Javascript Bundle-->
+		<!--begin::Vendors Javascript(used for this page only)-->
+		<script src="{% static 'admin/assets/js/scripts.bundle.js' %}"></script>
+		<!--end::Vendors Javascript-->
+		<!--begin::Custom Javascript(used for this page only)-->
+		<script src="{% static 'admin/assets/js/custom/apps/user-management/users/list/table.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/apps/user-management/users/list/export-users.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/apps/user-management/users/list/add.js' %}"></script>
+		<script src="{% static 'admin/assets/js/widgets.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/widgets.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/apps/chat/chat.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/new-target.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/users-search.js' %}"></script>
+{% endblock %}

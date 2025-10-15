@@ -1,0 +1,304 @@
+{% extends 'admin/layout/base.html' %}
+
+{% load static %}
+
+{% block main %}
+<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+    <div class="col-xl-12">
+        <div class="card">
+            <!-- Card Header with Status Info -->
+            <div class="card-header border-0 py-6 d-flex justify-content-between align-items-center">
+                <div class="card-title d-flex align-items-center">
+                    <i class="ki-duotone ki-document fs-2x text-info me-3">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    <div>
+                        <h2 class="fw-bold text-gray-900 mb-1">Detail Pengaduan</h2>
+                        <div class="text-muted fs-6">
+                            <span class="me-2">{{ pengaduan.created_at|date:"j F Y, H:i" }}</span>
+                            <span class="badge badge-light-info">({{ pengaduan.created_at|timesince }} yang lalu)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-toolbar">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalKonfirmasiBalas">
+                        <i class="ki-duotone ki-message-text-2 fs-2 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                        Balas Pengaduan
+                    </button>
+                    
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body pt-0">
+                <div class="d-none greeting-text" data-username="{{ pengaduan.nama_pengadu }}">
+                    Selamat {% if waktu == 'pagi' %}Pagi{% elif waktu == 'siang' %}Siang{% elif waktu == 'sore' %}Sore{% else %}Malam{% endif %}, {{ pengaduan.nama_pengadu }}
+                </div>
+                
+                <div class="row g-6">
+                    <!-- Left Column: Reporter Info -->
+                    <div class="col-md-5">
+                        <div class="card card-bordered">
+                            <div class="card-body">
+                                <div class="d-flex flex-column flex-center mb-8">
+                                    <div class="symbol symbol-100px symbol-circle mb-5">
+                                        <img src="{% if pengaduan.jenis_pelapor == 'perorangan' %}{% static 'admin/assets/media/pengaduan/perorangan.jpg' %}{% else %}{% static 'admin/assets/media/pengaduan/instansi.jpg' %}{% endif %}" 
+                                             alt="{{ pengaduan.jenis_pelapor }}" 
+                                             class="border border-4 border-gray-200">
+                                    </div>
+                                    <h3 class="fw-bold text-gray-900 mb-1">{{ pengaduan.nama_pengadu }}</h3>
+                                    <div class="badge badge-lg badge-light-primary mb-5">
+                                        {{ pengaduan.get_jenis_pelapor_display }}
+                                    </div>
+                                </div>
+
+                                <div class="separator separator-dashed my-5"></div>
+
+                                <!-- Contact Information -->
+                                <div class="mb-7">
+                                    <h4 class="fw-bold mb-4">Informasi Kontak</h4>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="ki-duotone ki-profile-circle fs-2 text-gray-600 me-3">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                        <span class="fw-semibold text-gray-700">{{ pengaduan.nik }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="ki-duotone ki-sms fs-2 text-gray-600 me-3">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <span class="fw-semibold text-gray-700">{{ pengaduan.email }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ki-duotone ki-phone fs-2 text-gray-600 me-3">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <span class="fw-semibold text-gray-700">{{ pengaduan.no_whatsapp }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Status Badges -->
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="d-flex flex-column">
+                                        <span class="text-muted fs-7 mb-1">Status Baca</span>
+                                        {% if pengaduan.read_status %}
+                                            <span class="badge badge-light-success">Sudah Dibaca</span>
+                                        {% else %}
+                                            <span class="badge badge-light-danger">Belum Dibaca</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-muted fs-7 mb-1">Status Balasan</span>
+                                        {% if pengaduan.replay_status == "sudah dibalas" %}
+                                        <span class="badge badge-light-success">Sudah Dibalas</span>
+                                    {% else %}
+                                        <span class="badge badge-light-warning">Pending</span>
+                                    {% endif %}
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Complaint Details -->
+                    <div class="col-md-7">
+                        <div class="card card-bordered h-100">
+                            <div class="card-header border-0">
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bold text-gray-900">Isi Pengaduan</span>
+                                    <span class="text-muted mt-1 fw-semibold fs-6">Kategori: {{ pengaduan.get_kategori_pengaduan_display }}</span>
+                                </h3>
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="fs-5 fw-normal text-gray-700 p-5 rounded bg-light-primary">
+                                    {{ pengaduan.deskripsi_pengaduan|linebreaksbr }}
+                                </div>
+
+                                <!-- Additional Actions -->
+                                <div class="d-flex justify-content-between align-items-center mt-8">
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <a href="tel:{{ pengaduan.no_whatsapp }}" class="btn btn-flex btn-light btn-color-gray-600">
+                                            <i class="ki-duotone ki-phone fs-2 me-2">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            Telepon Pelapor
+                                        </a>
+                                        <!-- <a href="mailto:{{ pengaduan.email }}" class="btn btn-flex btn-light btn-color-gray-600">
+                                            <i class="ki-duotone ki-sms fs-2 me-2">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            Kirim Email
+                                        </a> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="{% url 'admin:index_pengaduan' %}" class="btn btn-light-primary me-3">
+                            <i class="ki-duotone ki-arrow-left fs-2 me-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            Kembali
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    
+        <div class="modal fade" id="modalKonfirmasiBalas" tabindex="-1" aria-labelledby="modalKonfirmasiBalasLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{% url 'admin:balas_index_pengaduan' pengaduan.pengaduan_id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKonfirmasiBalasLabel">Konfirmasi Balasan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin membalas pengaduan ini via WhatsApp?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                    <button type="button" id="submit-balas-wa" class="btn btn-success">Iya, Balas Sekarang</button>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalSuksesBalas" tabindex="-1" aria-labelledby="modalSuksesBalasLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalSuksesBalasLabel">Berhasil Dibalas</h5>
+                </div>
+                <div class="modal-body">
+                  Status berhasil diubah menjadi <strong>Sudah Dibalas</strong>.<br>
+                  Klik OK untuk lanjut ke WhatsApp.
+                </div>
+                <div class="modal-footer">
+                  <form id="redirect-form" method="get" action="">
+                    <input type="hidden" name="wa_redirect" value="1">
+                    <button type="button" id="btn-ok-redirect" class="btn btn-success">OK</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // 🔧 Format nomor WhatsApp ke format internasional
+    const formatWhatsAppNumber = (number) => {
+        let cleaned = number.replace(/\D/g, '');
+        if (cleaned.startsWith('0')) return '62' + cleaned.slice(1);
+        if (cleaned.startsWith('+')) return cleaned.slice(1);
+        return cleaned;
+    };
+
+    // 🕒 Greeting sesuai waktu
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 10) return 'Pagi';
+        if (hour < 15) return 'Siang';
+        if (hour < 18) return 'Sore';
+        return 'Malam';
+    };
+
+    // 🔤 Tampilkan greeting di elemen tersembunyi
+    const greetingText = document.querySelector('.greeting-text');
+    if (greetingText) {
+        const username = greetingText.getAttribute('data-username');
+        greetingText.textContent = `Selamat ${getGreeting()}, ${username}`;
+    }
+
+    // ☎️ Format link telp agar jadi +62
+    document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+        const phone = link.getAttribute('href').replace('tel:', '');
+        link.setAttribute('href', `tel:${formatWhatsAppNumber(phone)}`);
+    });
+
+    // ✅ Saat tombol "Iya, Balas Sekarang" diklik
+    const submitBtn = document.getElementById('submit-balas-wa');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function () {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'admin:balas_index_pengaduan' pengaduan.pengaduan_id %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Tutup modal pertama
+                    const modal1 = bootstrap.Modal.getInstance(document.getElementById('modalKonfirmasiBalas'));
+                    if (modal1) modal1.hide();
+
+                    // Tampilkan modal kedua
+                    const modal2 = new bootstrap.Modal(document.getElementById('modalSuksesBalas'));
+                    modal2.show();
+                } else {
+                    alert('Terjadi kesalahan saat mengubah status.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Gagal menghubungi server.');
+            });
+        });
+    }
+
+    // 🟢 Saat tombol "OK" di modal sukses diklik
+    const okRedirectBtn = document.getElementById('btn-ok-redirect');
+    if (okRedirectBtn) {
+        okRedirectBtn.addEventListener('click', function () {
+            const modalEl = document.getElementById('modalSuksesBalas');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            modalInstance.hide(); // Tutup modal sukses
+
+            // Tunggu modal tertutup baru refresh
+            setTimeout(() => {
+                const currentUrl = window.location.origin + window.location.pathname;
+                window.location.href = currentUrl + '?wa_redirect=1';
+            }, 500);
+        });
+    }
+
+    // 🔁 Redirect otomatis ke WhatsApp setelah reload dengan ?wa_redirect=1
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('wa_redirect')) {
+        const nama = "{{ pengaduan.nama_pengadu }}";
+        const noWa = "{{ pengaduan.no_whatsapp }}";
+        const greeting = `Selamat ${getGreeting()}, ${nama}`;
+        const formattedWa = formatWhatsAppNumber(noWa);
+
+        setTimeout(() => {
+            window.location.href = `https://wa.me/${formattedWa}?text=${encodeURIComponent(greeting)}`;
+        }, 300);
+    }
+});
+</script>
+{% endblock %}

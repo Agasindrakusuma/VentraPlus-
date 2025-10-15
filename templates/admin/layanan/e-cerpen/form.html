@@ -1,0 +1,368 @@
+{% extends 'admin/layout/base.html' %}
+{% load static %}
+
+{% block main %}
+<form method="post"  id="ecerpenForm" enctype="multipart/form-data" action="{% if edit %}{% url 'admin:edit_e_cerpen' ecerpen.ecerpen_id %}{% else %}{% url 'admin:tambah_e_cerpen' %}{% endif %}" >
+{% csrf_token %}
+
+<div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row mt-15" id="kt_stepper_example_vertical">
+
+    <div class="d-flex flex-row-auto w-100 w-lg-300px">
+    <div class="stepper-nav flex-cente">
+        <div class="stepper-item me-10 current" data-kt-stepper-element="nav">
+            <div class="stepper-wrapper d-flex align-items-center">
+                <div class="stepper-icon w-40px h-40px">
+                    <i class="stepper-check fas fa-check"></i>
+                    <span class="stepper-number">1</span>
+                </div>
+
+                <div class="stepper-label">
+                    <h3 class="stepper-title">
+                        Step 1
+                    </h3>
+
+                    <div class="stepper-desc">
+                        Description
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper-line h-40px"></div>
+        </div>
+
+        <div class="stepper-item me-5" data-kt-stepper-element="nav">
+            <div class="stepper-wrapper d-flex align-items-center">
+                <div class="stepper-icon w-40px h-40px">
+                    <i class="stepper-check fas fa-check"></i>
+                    <span class="stepper-number">2</span>
+                </div>
+
+                <div class="stepper-label">
+                    <h3 class="stepper-title">
+                        Step 2
+                    </h3>
+
+                    <div class="stepper-desc">
+                        Description
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper-line h-40px"></div>
+        </div>
+
+        
+    </div>
+    </div>
+
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general" aria-selected="true" role="tab">E-Cerpen</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <div class="card card-flush py-4">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>{% if edit %}Edit{% else %}Tambah{% endif %} E-Cerpen</h2>
+                            </div>
+                        </div>
+                    
+            <div class="card-body pt-0">
+                <div class="flex-column current" data-kt-stepper-element="content">
+                    <div class="fv-row mb-10">
+                        <label class="form-label">Judul Cerpen</label>
+                        <input type="text" class="form-control form-control-solid" value="{{ ecerpen.judul }}" name="frm_judul" placeholder="Judul Cerpen" required/>
+                    </div>
+
+                    
+                    <div class="fv-row mb-10">
+                        <label class="form-label">Penulis</label>
+                        <input type="text" class="form-control form-control-solid" value="{{ ecerpen.penulis }}" name="frm_penulis" placeholder="Nama Penulis" required>
+                    </div>
+                    
+                    <div class="fv-row mb-10">
+                        <label class="form-label">Durasi Baca</label>
+                        <input type="text" class="form-control form-control-solid" value="{{ ecerpen.durasi_baca }}" name="frm_durasi_baca" placeholder="Durasi Baca" required>
+                    </div>
+
+                    <div class="fv-row mb-10">
+                        <select class="form-select form-control-solid" name="frm_batas_usia" required>
+                            <option value="" disabled hidden selected>Pilih Batas Usia</option>
+                            <option value="Semua Umur" {% if ecerpen.batas_usia == 'Semua Umur' %}selected{% endif %}>Semua Umur</option>
+                            <option value="13+" {% if ecerpen.batas_usia == '13+' %}selected{% endif %}>13 Tahun ke Atas</option>
+                            <option value="17+" {% if ecerpen.batas_usia == '17+' %}selected{% endif %}>17 Tahun ke Atas</option>
+                            <option value="18+" {% if ecerpen.batas_usia == '18+' %}selected{% endif %}>18 Tahun ke Atas</option>
+                        </select>
+                    </div>
+                    <div class="fv-row mb-10">
+                        <label class="form-label">Tanggal Publikasi</label>
+                        <input type="date" class="form-control form-control-solid" value="{{ ecerpen.tanggal_publikasi|date:'Y-m-d' }}" name="frm_tanggal_publikasi" placeholder="Tanggal Publikasi" required />
+                    </div>
+                    <div class="fv-row mb-10">
+                        <select class="form-select form-select-transparent" name="frm_kategori" data-control="select2" data-placeholder="Pilih kategori" required>
+                            <option value="">Pilih Kategori</option>
+                            {% for data_kategori in dt_kategori %}
+                                <option value="{{ data_kategori.pk }}"
+                                        {% if edit and ecerpen.kategori_id and ecerpen.kategori_id.pk == data_kategori.pk %}
+                                            selected
+                                        {% endif %}
+                                >
+                                    {{ data_kategori.nama_kategori }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="flex-column" data-kt-stepper-element="content">
+                    <div class="card-body pt-0">
+                        <div class="row g-10 mb-10">
+                            <div class="col-md-6">
+                                <div class="card card-flush h-100">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Cover</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-center pt-0">
+                                        <style>
+                                            .image-input-placeholder { 
+                                                background-image: url('/static/admin/assets/media/svg/files/blank-image.svg'); 
+                                            } 
+                                            [data-bs-theme="dark"] .image-input-placeholder { 
+                                                background-image: url('admin/assets/media/svg/files/blank-image-dark.svg'); 
+                                            }
+                                        </style>
+                                        <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true">
+                                            <div class="image-input-wrapper w-150px h-150px"
+                                                {% if ecerpen.cover %}
+                                                style="background-image: url('{{ ecerpen.cover.url }}');"
+                                                {% endif %}></div>
+                                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                data-kt-image-input-action="change">
+                                                <i class="ki-outline ki-pencil fs-7"></i>
+                                                <input type="file" name="frm_cover" accept=".png, .jpg, .jpeg">
+                                            </label>
+                                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                data-kt-image-input-action="cancel"
+                                                data-bs-toggle="tooltip"
+                                                aria-label="Cancel cover"
+                                                data-bs-original-title="Cancel cover"
+                                                data-kt-initialized="1">
+                                                <i class="ki-outline ki-cross fs-2"></i>
+                                            </span>
+                                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                data-kt-image-input-action="remove"
+                                                data-bs-toggle="tooltip"
+                                                aria-label="Remove cover"
+                                                data-bs-original-title="Remove cover"
+                                                data-kt-initialized="1">
+                                                <i class="ki-outline ki-cross fs-2"></i>
+                                            </span>
+                                        </div>
+                                        <div class="text-muted fs-7">Format: *.png, *.jpg, *.jpeg (max 2MB)</div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-6">
+                                <div class="card card-flush h-100">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>File E-Cerpen (PDF)</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="fv-row mb-10">
+                                            <input type="file" class="form-control form-control-solid" name="frm_path" accept=".pdf"/>
+                                            {% if edit and ecerpen.path_ecerpen %}
+                                                <div class="mt-2">
+                                                    <span>File saat ini: </span>
+                                                    <a href="{{ ecerpen.path_ecerpen.url }}" target="_blank">{{ ecerpen.path_ecerpen.name }}</a>
+                                                </div>
+                                            {% endif %}
+                                            <div class="text-muted fs-7">Format: *.pdf (max 10MB)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Sinopsis</label>
+                            <div id="kt_docs_ckeditor_document">
+                                {{ ecerpen.sinopsis|safe }}
+                            </div>
+                            <input type="hidden" name="frm_sinopsis" id="frm_sinopsis" required>
+                            <div class="text-muted fs-7 mt-2">Tulis Sinopsis di sini.</div>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            </div>
+            
+                
+
+        </form>
+    </div>
+    <div class="d-flex flex-stack">
+        <div class="mb-2">
+            <a href="{% url 'admin:index_e_cerpen' %}" class="btn btn-light btn-active-light-danger me-2">
+                <i class="ki-outline ki-cross fs-2"></i> Batal
+            </a>
+            <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                Back
+            </button>
+        </div>
+    
+        <div class="d-flex flex-stack pt-10">
+            
+            <div>
+                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">
+                    Lanjut <i class="ki-outline ki-arrow-right fs-4 ms-1 me-0"></i>
+                </button>
+                <button type="submit" class="btn btn-lg btn-success" data-kt-stepper-action="submit" id="submitBtn">
+                    <span class="indicator-label">
+                        <i class="ki-outline ki-check fs-3 ms-2 me-0"></i> Simpan
+                    </span>
+                    <span class="indicator-progress">
+                        Menyimpan... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+<link href="{% static 'admin/assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css"/>
+<script src="{% static 'admin/assets/js/scripts.bundle.js' %}"></script>\
+<script>
+    // Stepper lement
+var element = document.querySelector("#kt_stepper_example_vertical");
+
+// Initialize Stepper
+var stepper = new KTStepper(element);
+
+// Handle next step
+stepper.on("kt.stepper.next", function (stepper) {
+    stepper.goNext(); // go next step
+});
+
+// Handle previous step
+stepper.on("kt.stepper.previous", function (stepper) {
+    stepper.goPrevious(); // go previous step
+});
+</script>
+<script>
+    $(document).ready(function() {
+        // Initialize Select2
+        $('[data-control="select2"]').select2({
+            placeholder: $(this).data('placeholder'),
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
+    // Fungsi yang lebih robust untuk inisialisasi CKEditor
+    function initializeEditor() {
+        // Pastikan elemen editor ada
+        const editorElement = document.querySelector('#kt_docs_ckeditor_document');
+        if (!editorElement) return;
+    
+        // Load CKEditor jika belum ada
+        if (typeof ClassicEditor === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ckeditor.com/ckeditor5/38.0.1/classic/ckeditor.js';
+            script.onload = setupCKEditor;
+            script.onerror = handleEditorError;
+            document.head.appendChild(script);
+        } else {
+            setupCKEditor();
+        }
+    }
+    
+    function setupCKEditor() {
+        ClassicEditor
+            .create(document.querySelector('#kt_docs_ckeditor_document'), {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'link', 'blockQuote', 'insertTable', 'imageUpload', '|',
+                    'undo', 'redo'
+                ],
+                // Konfigurasi lainnya tetap sama
+            })
+            .then(editor => {
+                // Simpan instance editor
+                window.editorInstance = editor;
+                
+                // Update hidden input saat content berubah
+                editor.model.document.on('change:data', () => {
+                    document.getElementById('frm_sinopsis').value = editor.getData();
+                });
+                
+                // Set data awal jika edit mode
+                // {% if edit and ecerpen.sinopsis %}
+                //     editor.setData(`{{ ecerpen.sinopsis|safe }}`);
+                // {% endif %}
+                
+                // Pastikan form yang benar dihubungkan
+                const form = document.getElementById('ecerpenForm') || document.querySelector('form[method="post"]');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        // Pastikan data terupdate
+                        document.getElementById('frm_sinopsis').value = editor.getData();
+                        
+                        // Validasi
+                        if (!document.getElementById('frm_sinopsis').value.trim()) {
+                            e.preventDefault();
+                            alert('Sinopsis tidak boleh kosong');
+                            return false;
+                        }
+                    });
+                }
+            })
+            .catch(handleEditorError);
+    }
+    
+    function handleEditorError(error) {
+        console.error('Editor error:', error);
+        const editorElement = document.querySelector('#kt_docs_ckeditor_document');
+        if (editorElement) {
+            editorElement.innerHTML = `
+                <div class="alert alert-danger">
+                    Gagal memuat editor teks. Silakan coba refresh halaman.
+                    <textarea name="frm_sinopsis" class="form-control mt-2" rows="5" required>${document.getElementById('frm_sinopsis').value}</textarea>
+                </div>
+            `;
+        }
+    }
+    
+    // Inisialisasi saat DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEditor);
+    } else {
+        initializeEditor();
+    }
+    </script>
+
+{% endblock %}

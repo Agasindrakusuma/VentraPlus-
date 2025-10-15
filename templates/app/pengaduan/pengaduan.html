@@ -1,0 +1,248 @@
+{% extends 'app/layout/base.html' %}
+
+{% load static %}
+{% block main %}
+
+<!-- Start Breadcrumb 
+============================================= -->
+<div class="breadcrumb-area text-center" style="background-image: url({% static 'app/assets/img/adnan/logo/bg.png' %}); background-size: cover; background-position: center; padding: 240px 0 120px;">
+  <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1;"></div>
+
+  <div class="container" style="position: relative; z-index: 2;">
+      <div class="row">
+          <div class="col-lg-8 offset-lg-2">
+              <h1 class="wow fadeInUp" data-wow-delay="500ms" data-wow-duration="400ms" style="color: white;">
+                  Pengaduan Ventra<strong><span class="blue-text">PLUS+</span></strong>
+              </h1>
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb justify-content-center" style="background: transparent;">
+                    <li ><a href="{% url 'app:index_app' %}" style="color: white;"><i class="fas fa-home" style="color: white;"></i> Home</a></li>
+                    <li class="active" style="color: white;">Pengaduan</li>
+                  </ol>
+              </nav>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- End Breadcrumb -->
+
+<div class="blog-area full-blog default-padding-bottom" style="margin-top: 15px;">
+    <div class="container">
+        <div class="blog-items">
+            <div class="row">
+	            <div class="blog-content col-xl-8 col-lg-7 col-md-12 pr-35 pr-md-15 pl-md-15 pr-xs-15 pl-xs-15">
+	                <div class="blog-style-two item">
+	                    <div class="blog-item-box">
+	                        <div class="info bg-cover bg-gray rounded" style="background-image: url({% static 'app/assets/img/shape/3.jpg' %});">
+	                            <h4>Layanan Pengaduan Publik<br>VentraPlus+</h4>
+	                            <p>Silhkan Masukkan data keluhan / permohonan informasi dengan mengisi data form pengaduan atau gunakan fitur chat dibawah untuk menyampaikan kebutuhan / hal yang ingin anda dapatkan dari DINKESP2KB Provinsi Papua Tengah!</p>
+	                            <div class="contact-form-style-one">
+	                                <center><h2 class="heading">Form Pengaduan</h2></center>
+	                                <!-- Alert Message -->
+                                    <div class="col-lg-12 alert-notification">
+                                        
+                                    </div>
+                                    <form id="formPengaduan" action="{% url 'app:pengaduan_app' %}" method="POST" enctype="multipart/form-data" class="form">
+                                        {% csrf_token %}
+	                                    <div class="row">
+	                                        <div class="col-lg-12">
+	                                            <div class="form-group">
+	                                                <input class="form-control" id="nama_lengkap" name="frm_nama_pengadu" placeholder="Nama Lengkap *" type="text" maxlength="254" required="">
+	                                                <span class="alert-error"></span>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    <div class="row">
+	                                        <div class="col-lg-12">
+	                                            <div class="form-group">
+	                                                <input class="form-control" id="no_nik" name="frm_nik" placeholder="No. NIK" type="text" maxlength="24">
+	                                                <span class="alert-error"></span>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    <div class="row">
+	                                        <div class="col-lg-6">
+	                                            <div class="form-group">
+	                                                <input class="form-control" id="email" name="frm_email" placeholder="Email *" type="email" maxlength="100" required="">
+	                                                <span class="alert-error"></span>
+	                                            </div>
+	                                        </div>
+	                                        <div class="col-lg-6">
+	                                            <div class="form-group">
+	                                                <input class="form-control" id="phone" name="frm_no_whatsapp" placeholder="No. WhatsApp *" type="text" maxlength="15" required="">
+	                                                <span class="alert-error"></span>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    <div class="row">
+	                                        <div class="col-lg-6">
+	                                            <div class="form-group">
+	                                                <select name="frm_jenis_pelapor" id="frm_jenis_pelapor" class="form-control" required>
+                                                        <option value="">Pilih Status</option>
+                                                        {% for pelapor in dt_pelapor %}
+                                                            <option value="{{ pelapor.0 }}">{{ pelapor.1 }}</option>
+                                                        {% endfor %}
+                                                    </select>                                                                                                                                                      
+	                                            </div>
+	                                        </div>
+	                                        <div class="col-lg-6">
+	                                            <div class="form-group">
+	                                                <select name="frm_kategori" id="frm_kategori" class="form-control" required>
+                                                        <option value="">Kategori Pengaduan</option>
+                                                        {% for kategori in kat_pengaduan %}
+                                                            <option value="{{ kategori.0 }}">{{ kategori.1 }}</option>
+                                                        {% endfor %}
+                                                    </select>                                                                                                                                                                                                         
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    <div class="row">
+	                                        <div class="col-lg-12">
+	                                            <div class="form-group comments">
+	                                                <textarea class="form-control" id="message" name="frm_deskripsi_pengaduan" placeholder="Deskripsikan Kritik, Saran atau Permohonan Informasi Anda *" maxlength="2000" required=""></textarea>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+                                    
+	                                    <div class="row form-group mb-3">
+                                            <div class="col-lg-12">
+                                                <div class="cf-turnstile" data-theme="light" data-sitekey="0x4AAAAAABeOdPjmC1W8n5tf"></div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <button type="submit" class="btn btn-primary">Kirim Pengaduan</button>
+                                            </div>
+                                        </div>
+                                    
+                                        <div id="resultMsg" class="mt-3"></div>
+	                                </form>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="services-content mt-5">
+	                            <div class="container">
+	                                <div class="row">
+	                                    <div class="col-lg-12">
+	                                        <h2 class="title">F.A.Q</h2>
+	                                        <p>Selamat datang di halaman Frequently Asked Questions (F.A.Q) terkait penginputan form pengaduan dan permohonan informasi. Halaman ini disusun untuk memberikan panduan dan menjawab pertanyaan umum seputar tata cara pengisian formulir pengaduan atau permohonan informasi agar prosesnya menjadi lebih mudah dan efisien. Kami berharap panduan ini dapat membantu Anda memahami langkah-langkah yang perlu diikuti, serta menjelaskan hak dan kewajiban Anda sebagai pengadu atau pemohon informasi.</p>
+	                                        <div class="accordion mt-50" id="faqAccordion">
+	                                        	
+	                                        	
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_1">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_1" aria-expanded="false" aria-controls="collapseOne_1">Berapa lama waktu yang dibutuhkan untuk merespon pengaduan saya??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_1" class="accordion-collapse collapse" aria-labelledby="headingOne_1" data-bs-parent="#faqAccordion" style="">
+	                                                    <div class="accordion-body"><p>Kami berusaha untuk merespon setiap pengaduan dalam waktu 7 hari kerja. Namun, waktu respon dapat bervariasi tergantung pada kompleksitas pengaduan.</p>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_2">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_2" aria-expanded="false" aria-controls="collapseOne_2"> Bagaimana cara saya mengetahui status pengaduan saya??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_2" class="accordion-collapse collapse " aria-labelledby="headingOne_2" data-bs-parent="#faqAccordion">
+	                                                    <div class="accordion-body"><p>Setelah mengisi form pengaduan, Anda akan menerima nomor registrasi yang dapat digunakan untuk memantau status pengaduan Anda. Anda juga dapat menghubungi kami melalui kontak yang tersedia di website.</p>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_3">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_3" aria-expanded="false" aria-controls="collapseOne_3">Apa saja informasi yang diperlukan untuk mengisi form pengaduan??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_3" class="accordion-collapse collapse " aria-labelledby="headingOne_3" data-bs-parent="#faqAccordion">
+	                                                    <div class="accordion-body"><p>Anda perlu mengisi beberapa informasi, termasuk:</p>
+
+<ul>
+	<li>Nama lengkap</li>
+	<li>NIK KTP</li>
+	<li>Nomor Whatsapp</li>
+	<li>Pilih Status (Perorangan Atau&nbsp;Instansi)</li>
+	<li>Pilih Kategori Pengaduan (Pelayanan, Informasi, Instansi, Masukan &amp; Saran)</li>
+	<li>Isi Deskripsi Dari Pengaduan anda</li>
+	<li>isikan Kode Captcha&nbsp;</li>
+	<li>Klik Tombol <strong>Kirim Pengaduan</strong></li>
+</ul>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_4">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_4" aria-expanded="false" aria-controls="collapseOne_4">Apa itu form pengaduan??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_4" class="accordion-collapse collapse " aria-labelledby="headingOne_4" data-bs-parent="#faqAccordion">
+	                                                    <div class="accordion-body"><p>Form pengaduan adalah sarana bagi masyarakat untuk menyampaikan keluhan, saran, atau kritik terkait pelayanan kesehatan, pengendalian penduduk, dan keluarga berencana di Provinsi Papua Tengah.</p>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_5">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_5" aria-expanded="false" aria-controls="collapseOne_5">Apakah identitas saya akan dirahasiakan??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_5" class="accordion-collapse collapse " aria-labelledby="headingOne_5" data-bs-parent="#faqAccordion">
+	                                                    <div class="accordion-body"><p>Ya, identitas Anda akan kami jaga kerahasiaannya. Informasi yang Anda berikan hanya akan digunakan untuk menangani pengaduan Anda.</p>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            <div class="accordion-item accordion-style-one">
+	                                                <h2 class="accordion-header" id="headingOne_6">
+	                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_6" aria-expanded="false" aria-controls="collapseOne_6">Siapa yang bisa mengisi form pengaduan??</button>
+	                                                </h2>
+	                                                <div id="collapseOne_6" class="accordion-collapse collapse " aria-labelledby="headingOne_6" data-bs-parent="#faqAccordion">
+	                                                    <div class="accordion-body"><p>Form pengaduan dapat diisi oleh seluruh masyarakat, baik warga Provinsi Papua Tengah maupun pihak lain yang memiliki pengalaman terkait pelayanan yang kami berikan.</p>
+</div>
+	                                                </div>
+	                                            </div>
+	                                            
+	                                            
+
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div> 
+	            </div>
+
+                <!-- Start Sidebar -->
+                <div class="sidebar col-xl-4 col-lg-5 col-md-12 mt-md-50 mt-xs-50">
+                    <aside>
+                        <div class="sidebar-item recent-post">
+                            <h4 class="title">Recent Post</h4>
+                            <ul>
+                                {% for recent in dt_berita|slice:":6" %}
+                                <li>
+                                    <div class="thumb">
+                                        <a href="{% url 'app:berita_details_app' recent.berita_id %}">
+                                            <img src="{{ recent.images.url }}" alt="Thumb">
+                                        </a>
+                                    </div>
+                                    <div class="info">
+                                        <div class="meta-title">
+                                            <span class="post-date">{{ recent.created_at|date:"d M, Y" }}</span>
+                                        </div>
+                                        <a href="{% url 'app:berita_details_app' recent.berita_id %}">
+                                            {{ recent.judul|truncatechars:300 }}
+                                        </a>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+                <!-- End Start Sidebar -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

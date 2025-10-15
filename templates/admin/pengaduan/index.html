@@ -1,0 +1,313 @@
+{% extends 'admin/layout/base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+    <div class="d-flex flex-column flex-column-fluid">
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div class="card">
+                <div class="card-header border-0 pt-6">
+                    <div class="card-title">
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <i class="ki-outline ki-magnifier fs-3 position-absolute ms-5"></i>
+                            <input type="text" 
+                                   class="form-control form-control-solid w-250px ps-13" 
+                                   placeholder="Search Pengaduan..." 
+                                   value="{{ search_query|default:'' }}" id="search"/>
+                        </div>
+                    </div>  
+                    <div class="card-toolbar">
+                        <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                            <a data-alt="{% url 'admin:arsip_index_pengaduan' %}" data-modal-title="Data Arsip Pengaduan" onclick="ModalArsip(this)"  class="btn btn-success me-3">
+                                <i class="ki-outline ki-inbox fs-2"></i>Data Arsip
+                            </a>
+                        </div>
+                    </div>
+                    <!--end::Card toolbar-->
+                </div>
+                <!--end::Card header-->
+                
+                <div class="card-body py-4" id="table-view">
+                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="table_pengaduan">
+						<thead>
+							<tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+								<th class="min-w-50px">No</th>
+								<th class="min-w-250px">Identitas Pelapor</th>
+								<th class="min-w-200px">Status/Kategori Pelapor</th>
+								<th class="min-w-125px">Deskripsi</th>
+								<th class="min-w-125px">Status Pengaduan</th>
+								<th class="text-end min-w-100px">Actions</th>
+							</tr>
+						</thead>
+						<tbody class="text-gray-600 fw-semibold">
+							{% for pengaduan in data_pengaduan %}
+							<tr> 
+								<td>
+									{{ forloop.counter }}<br>
+									
+								</td>                                 
+								
+								<td>
+									<strong>Nama:</strong> {{ pengaduan.nama_pengadu }}<br>
+									<strong>NIK:</strong> {{ pengaduan.nik }}<br>
+									<strong>Email:</strong> {{ pengaduan.email }}<br>
+									<strong>WA:</strong> {{ pengaduan.no_whatsapp }}<br>
+                                    <small class="text-muted">{{ pengaduan.created_at|date:"j F Y, H:i" }}</small>
+								</td>
+								
+								<td>
+									<strong>Status:</strong>
+									<span class="badge badge-light-success">
+										{{ pengaduan.get_jenis_pelapor_display }}
+									</span><br>
+									<strong>Kategori:</strong>
+									<span class="badge badge-light-primary">
+										{{ pengaduan.get_kategori_pengaduan_display }}
+									</span>
+								</td>
+
+								<td>
+									{{ pengaduan.deskripsi_pengaduan|truncatewords:50 }}
+								</td>
+								
+								<td>
+									<strong>Read:</strong><br>
+									{% if pengaduan.read_status %}
+										<span class="badge badge-light-success">Sudah Dibaca</span>
+									{% else %}
+										<span class="badge badge-light-danger">Belum Dibaca</span>
+									{% endif %}
+									<br>
+									<strong>Replay:</strong><br>
+                                    {% if pengaduan.replay_status == "sudah dibalas" %}
+                                        <span class="badge badge-light-success">Sudah Dibalas</span>
+                                    {% else %}
+                                        <span class="badge badge-light-warning">Pending</span>
+                                    {% endif %}
+								</td>
+								
+								<td class="text-end d-flex justify-content-end align-items-center gap-2">
+									<!-- Ikon menu actions -->
+                                    <a href="{% url 'admin:details_index_pengaduan' pengaduan.pengaduan_id %}" class="btn btn-icon btn-sm mt-8 btn-light-primary" 
+                                        data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                        <img src="{% static 'admin/assets/media/icons/duotune/general/gen004.svg' %}" alt="Details" title="Details" style="height: 20px;" />
+                                    </a>
+
+									<!-- Ikon arsip -->
+									<form method="post" action="{% url 'admin:archive_index_pengaduan' pengaduan.pengaduan_id %}" id="archive-form-{{ pengaduan.pengaduan_id }}">
+										{% csrf_token %}
+										<a href="#" class="btn btn-icon btn-sm mt-8 btn-light-success" onclick="confirmArchive('{{ pengaduan.pengaduan_id }}')">
+											<img src="{% static 'admin/assets/media/icons/duotune/files/fil018.svg' %}" alt="Arsipkan" title="Arsipkan" style="height: 20px;" />
+										</a>
+									</form>
+								</td>
+								
+								
+								</td>
+								
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+                    </div>
+                    <!--end::Table-->
+                </div>
+                <!--end::Card body-->
+                
+                
+                <!--end::Arsip View-->
+            </div>
+            
+        </div>
+        <!--end::Content-->
+    </div>
+    <!--end::Content wrapper-->
+    
+    <!--end::Footer-->
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'admin/assets/js/custom/main-modul.js' %}"></script>
+<script>
+    /**
+* Fungsi untuk menangani pengurutan khusus pada kolom "No" DataTables
+* 
+* Kita perlu menambahkan data untuk pengurutan yang sebenarnya karena
+* nilai yang ditampilkan di kolom No (meta.row + 1) adalah nilai yang 
+* sudah berubah berdasarkan pengurutan saat ini.
+*/
+$.fn.dataTable.ext.order['row-number'] = function (settings, col) {
+return this.api().column(col, {order:'index'}).nodes().map(function (td, i) {
+    // Kita memberikan indeks asli (awal) sebagai nilai untuk pengurutan
+    return i + 1;
+});
+};
+
+// Fungsi untuk inisialisasi DataTable
+function initDataTableArsip() {
+// Destroy DataTable jika sudah ada
+if ($.fn.DataTable.isDataTable('#table_arsip_pengaduan')) {
+    $('#table_arsip_pengaduan').DataTable().destroy();
+}
+
+// Inisialisasi ulang DataTable dengan konfigurasi untuk nomor urut
+}
+
+// Inisialisasi DataTable utama dengan konfigurasi nomor urut yang sama
+function initMainDataTable() {
+// Destroy jika sudah ada
+if ($.fn.DataTable.isDataTable('#table_pengaduan')) {
+    $('#table_pengaduan').DataTable().destroy();
+}
+
+// Inisialisasi DataTable
+window.table = $('#table_pengaduan').DataTable({
+    columnDefs: [
+        {
+            targets: 0,
+            orderable: true,  // Mengaktifkan pengurutan untuk kolom nomor
+            searchable: false,
+            className: 'text-center',
+            render: function (data, type, full, meta) {
+                if (type === 'display' || type === 'filter') {
+                    return meta.row + 1;
+                }
+                // Untuk pengurutan, gunakan indeks asli
+                return meta.row;
+            },
+            // Menggunakan pengurutan khusus
+            orderDataType: 'row-number'
+        }
+    ],
+    
+    // Menerapkan pengurutan default pada kolom "No" secara ascending
+    order: [[0, 'asc']]
+});
+
+// Setup search event listener
+$('#search').off('keyup').on('keyup', function () {
+    window.table.search(this.value).draw();
+});
+}
+
+// Inisialisasi ketika dokumen siap
+$(document).ready(function () {
+// Inisialisasi DataTable utama
+initMainDataTable();
+
+// Fungsi untuk modal arsip
+window.ModalArsip = function(e) {
+    showModal(e, {size: 'extra_large'}, 'arsip', function() {
+        // Callback setelah modal dimuat
+        setTimeout(function() {
+            initDataTableArsip();
+        }, 300);
+    });
+};
+
+// Fungsi untuk modal tambah/edit
+window.ModalTambah = function(e) {
+    showModal(e, {size: 'large'});
+};
+
+window.ModalEdit = function(e) {
+    showModal(e, {size: 'large'});
+};
+});
+</script>
+<script>
+
+function showTable() {
+    document.getElementById('table-view').classList.remove('d-none');
+    document.getElementById('arsip-view').classList.add('d-none');
+    document.getElementById('arsip-btn').classList.remove('d-none');
+    document.getElementById('tambah-btn').classList.remove('d-none');
+    document.getElementById('back-btn').classList.add('d-none');
+}
+
+function showArsip() {
+    document.getElementById('table-view').classList.add('d-none');
+    document.getElementById('arsip-view').classList.remove('d-none');
+    document.getElementById('arsip-btn').classList.add('d-none');
+    document.getElementById('tambah-btn').classList.add('d-none');
+    document.getElementById('back-btn').classList.remove('d-none');
+}
+
+    
+    function confirmArchive(profileId) {
+        Swal.fire({
+            title: 'Konfirmasi Arsip',
+            text: 'Apakah Anda yakin ingin mengarsipkan data ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Arsipkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('archive-form-' + profileId).submit();
+            }
+        });
+    }
+    function confirmPulihkan(profileId, event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Konfirmasi Pulihkan',
+        text: 'Apakah Anda yakin ingin memulihkan data ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Pulihkan!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('restore-form-' + profileId).submit();
+        }
+    });
+}
+
+function confirmHapus(profileId, event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Konfirmasi Hapus',
+        text: 'Apakah Anda yakin ingin menghapus data ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('hapus-form-' + profileId).submit();
+        }
+    });
+}
+
+    
+    function ModalTambah(e) {
+    // Tutup modal lain yang aktif sebelum membuka yang baru
+    $('.modal').modal('hide');
+    showModal(e, {size: 'large'});
+}
+
+function ModalEdit(e) {
+    $('.modal').modal('hide');
+    showModal(e, {size: 'large'});
+}
+    function ModalArsip(e) {
+        $('.modal').modal('hide');
+        showModal(e, {size: 'extra_large'}, 'arsip');
+    }
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+*.pyc
+deiyai_plus/settings.py
+deiyai_plus_admin/migrations/*.py
+deiyai_plus_app/migrations/*.py
+*.sql
+*.sqlite
+media/*
+images/*
+assets_root/*
+logs/*
+data.json
+media.zip__pycache__/

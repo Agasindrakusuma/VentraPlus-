@@ -1,0 +1,146 @@
+{% load static %}
+<link href="{% static 'admin/assets/plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css" />
+<div class="card">
+    <!--begin::Card header-->
+    <div class="card-header border-0 pt-6">
+        <!--begin::Card title-->
+        <div class="card-title">
+            <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-outline ki-magnifier fs-3 position-absolute ms-5"></i>
+                <input type="text" 
+                       class="form-control form-control-solid w-250px ps-13" 
+                       placeholder="Search Pengaduan..." 
+                       value="{{ search_query|default:'' }}" id="search-arsip"/>
+            </div>
+        </div>  
+        <div class="card-toolbar">
+            </div>
+        
+        </div>
+    </div>
+    <table id="table_arsip_pengaduan" class="table align-middle table-row-dashed fs-6 gy-5">
+        <thead>
+            <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                <th class="min-w-50px">No</th>
+                <th class="min-w-250px">Identitas Pelapor</th>
+                <th class="min-w-200px">Status/Kategori Pelapor</th>
+                <th class="min-w-125px">Deskripsi</th>
+                <th class="min-w-125px">Status Pengaduan</th>
+                <th class="text-end min-w-100px">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-600 fw-semibold">
+            {% for pengaduan in data_pengaduan %}
+            <tr> 
+                <td class="text-center">
+                    {{ forloop.counter }}
+                </td>                                 
+                
+                <td>
+                    <strong>Nama:</strong> {{ pengaduan.nama_pengadu }}<br>
+                    <strong>NIK:</strong> {{ pengaduan.nik }}<br>
+                    <strong>Email:</strong> {{ pengaduan.email }}<br>
+                    <strong>WA:</strong> {{ pengaduan.no_whatsapp }}<br>
+                    <small class="text-muted">{{ pengaduan.archived_at|date:"j F Y, H:i" }}</small>
+                </td>
+                
+                <td>
+                    <strong>Status:</strong>
+                    <span class="badge badge-light-success">
+                        {{ pengaduan.get_jenis_pelapor_display }}
+                    </span><br>
+                    <strong>Kategori:</strong>
+                    <span class="badge badge-light-primary">
+                        {{ pengaduan.get_kategori_pengaduan_display }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ pengaduan.deskripsi_pengaduan|truncatewords:50 }}
+                </td>
+                
+                <td>
+                    <strong>Read:</strong><br>
+                    {% if pengaduan.read_status %}
+                        <span class="badge badge-light-success">Sudah Dibaca</span>
+                    {% else %}
+                        <span class="badge badge-light-danger">Belum Dibaca</span>
+                    {% endif %}
+                    <br>
+                    <strong>Replay:</strong><br>
+                    {% if pengaduan.replay_status %}
+                        <span class="badge badge-light-warning">Pending</span>
+                    {% else %}
+                        <span class="badge badge-light-info">Success</span>
+                    {% endif %}
+                </td>
+                
+                <td class="text-end d-flex justify-content-end align-items-center gap-2">
+                    <!-- Ikon Details -->
+                    <a href="#" class="btn btn-icon btn-sm mt-8 btn-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                        <img src="{% static 'admin/assets/media/icons/duotune/general/gen004.svg' %}" alt="Actions" title="Menu Actions" style="height: 20px;" />
+                    </a>
+                
+                    <form method="post" action="{% url 'admin:restore_index_pengaduan' pengaduan.pengaduan_id %}" id="restore-form-{{ pengaduan.pengaduan_id }}">
+                        {% csrf_token %}
+                        <a href="#" class="btn btn-icon btn-sm mt-8 btn-light-success" onclick="confirmPulihkan('{{ pengaduan.pengaduan_id }}', event)">
+                        <img src="{% static 'admin/assets/media/icons/duotune/files/fil017.svg' %}" alt="Pulihkan" title="Pulihkan" style="height: 20px;" />
+                        </a>
+                    </form>
+                    
+                    <form method="get" action="{% url 'admin:hapus_index_pengaduan' pengaduan.pengaduan_id %}" id="hapus-form-{{ pengaduan.pengaduan_id }}">
+                        {% csrf_token %}
+                        <a href="#" class="btn btn-icon btn-sm mt-8 btn-light-danger" onclick="confirmHapus('{{ pengaduan.pengaduan_id }}', event)">
+                        <img src="{% static 'admin/assets/media/icons/duotune/general/gen027.svg' %}" alt="Hapus" title="Hapus" style="height: 20px;" />
+                        </a>
+                    </form>                      
+                </td>                
+                
+                
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% block js %}
+<script src="{% static 'admin/assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+
+<script>
+    function initDataTableArsip() {
+        // Destroy DataTable jika sudah ada
+        if ($.fn.DataTable.isDataTable('#table_arsip_pengaduan')) {
+            $('#table_arsip_pengaduan').DataTable().destroy();
+        }
+
+        // Inisialisasi ulang DataTable
+        window.table_arsip = new DataTable('#table_arsip_pengaduan');
+
+        // Setup search event listener
+        $('#search-arsip').off('keyup').on('keyup', function () {
+            window.table_arsip.search(this.value).draw();
+        });
+
+        console.log('DataTable diinisialisasi ulang');
+    }
+
+    // Inisialisasi saat dokumen siap
+    $(document).ready(function () {
+        initDataTableArsip();
+    });
+
+    // Jika menggunakan AJAX/SPA/tab/modal dynamic, pastikan panggil ini lagi setelah konten dimuat
+    // Contoh: jika Anda reload bagian konten #table-view via AJAX
+    function reloadArsipSekolah() {
+        $.get("{% url 'admin:arsip_index_pengaduan' %}", function (html) {
+            $('#table-view').html(html);
+            initDataTableArsip(); // Panggil ulang setelah konten selesai dimuat
+        });
+    }
+
+    // Anda bisa panggil reloadArsipKategori() dari tombol, tab, atau event lain sesuai kebutuhan
+</script>
+{% endblock %}

@@ -1,0 +1,262 @@
+<form method="post" enctype="multipart/form-data" class="form" id="profileForm" action="{% if edit %}{% url 'admin:edit_master_settings' settings.settings_id %}{% else %}{% url 'admin:tambah_master_settings' %}{% endif %}">
+    {% csrf_token %}
+    <div class="d-flex flex-column scroll-y px-5 px-lg-10" data-kt-scroll="true">
+        
+        <div class="row mb-7">  <!-- Baris utama -->
+            <!-- Kolom Barcode -->
+            <div class="col-md-6 fv-row">
+                <label class="required fw-semibold fs-6 mb-2">Barcode</label>
+                <div class="card-body pt-0">
+                    <div class="image-input image-input-outline" data-kt-image-input="true"
+                         {% if settings.barcode %}style="background-image: url('{{ settings.barcode.url }}')"{% endif %}>
+                        <div class="image-input-wrapper w-150px h-150px"
+                             {% if settings.barcode %}style="background-image: url('{{ settings.barcode.url }}');"{% endif %}></div>
+        
+                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                               data-kt-image-input-action="change"
+                               data-bs-toggle="tooltip"
+                               title="Change cover">
+                            <i class="ki-outline ki-pencil fs-7"></i>
+                            <input type="file" id="frm_barcode" name="frm_barcode" accept=".png, .jpg, .jpeg" />
+                        </label>
+        
+                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                              data-kt-image-input-action="cancel"
+                              data-bs-toggle="tooltip"
+                              title="Cancel cover">
+                            <i class="ki-outline ki-cross fs-2"></i>
+                        </span>
+        
+                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                              data-kt-image-input-action="remove"
+                              data-bs-toggle="tooltip"
+                              title="Remove cover">
+                            <i class="ki-outline ki-cross fs-2"></i>
+                        </span>
+                    </div>
+                    <div class="text-muted fs-7 mt-2">Format: .png, .jpg, .jpeg</div>
+                </div>
+            </div>
+        
+            <!-- Kolom Logo -->
+            <div class="col-md-6 fv-row">
+                <label class="required fw-semibold fs-6 mb-2">Logo</label>
+                <div class="card-body pt-0">
+                    <div class="image-input image-input-outline" data-kt-image-input="true"
+                         {% if settings.logo %}style="background-image: url('{{ settings.logo.url }}')"{% endif %}>
+                        <div class="image-input-wrapper w-150px h-150px"
+                             {% if settings.logo %}style="background-image: url('{{ settings.logo.url }}');"{% endif %}></div>
+        
+                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                               data-kt-image-input-action="change"
+                               data-bs-toggle="tooltip"
+                               title="Change cover">
+                            <i class="ki-outline ki-pencil fs-7"></i>
+                            <input type="file" id="frm_logo" name="frm_logo" accept=".png, .jpg, .jpeg" />
+                        </label>
+        
+                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                              data-kt-image-input-action="cancel"
+                              data-bs-toggle="tooltip"
+                              title="Cancel cover">
+                            <i class="ki-outline ki-cross fs-2"></i>
+                        </span>
+        
+                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                              data-kt-image-input-action="remove"
+                              data-bs-toggle="tooltip"
+                              title="Remove cover">
+                            <i class="ki-outline ki-cross fs-2"></i>
+                        </span>
+                    </div>
+                    <div class="text-muted fs-7 mt-2">Format: .png, .jpg, .jpeg</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Nama</label>
+            <input type="text" value="{{ settings.nama_aplikasi }}" name="frm_nama" class="form-control form-control-solid" placeholder="Nama" required />
+        </div>
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Email</label>
+            <input type="email" value="{{ settings.email }}" name="frm_email" class="form-control form-control-solid" placeholder="example@domain.com" required />
+        </div>
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">kontak</label>
+            <input type="text" value="{{ settings.kontak }}" name="frm_kontak" class="form-control form-control-solid" placeholder="kontak" required />
+        </div>
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Alamat</label>
+            <input type="text" value="{{ settings.alamat }}" name="frm_alamat" class="form-control form-control-solid" placeholder="Alamat" required />
+        </div>
+
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2">Deskripsi</label>
+            
+            <!-- CKEditor Content Container -->
+            <div id="kt_docs_ckeditor_document">
+                {{ settings.deskripsi_aplikasi|safe }}
+
+            </div>
+            
+            <!-- Hidden input to store CKEditor content -->
+            <input type="hidden" name="frm_deskripsi" id="frm_deskripsi" required>
+            
+            <div class="text-muted fs-7 mt-2">Tulis Deskripsi di sini.</div>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="text-center pt-10">
+        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+</form>
+
+<script>
+    
+    // Image preview handling
+    function handleImagePreview(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const wrapper = input.closest('.image-input').querySelector('.image-input-wrapper');
+                wrapper.style.backgroundImage = `url('${e.target.result}')`;
+                wrapper.classList.add('image-input-wrapper-loaded');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    document.getElementById('frm_barcode' ).addEventListener('change', function() {
+        handleImagePreview(this);
+    });
+    document.getElementById('frm_logo').addEventListener('change', function() {
+        handleImagePreview(this);
+    });
+
+    if (typeof KTImageInput !== 'undefined') {
+        new KTImageInput(document.querySelector('.image-input'));
+    }
+
+    document.querySelector('[data-kt-image-input-action="cancel"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        const input = document.getElementById('frm_barcode', 'frm_logo');
+        input.value = '';
+        const wrapper = input.closest('.image-input').querySelector('.image-input-wrapper');
+        wrapper.style.backgroundImage = '';
+        wrapper.classList.remove('image-input-wrapper-loaded');
+    });
+
+    document.querySelector('[data-kt-image-input-action="remove"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        const input = document.getElementById('frm_barcode', 'frm_logo');
+        input.value = '';
+        const wrapper = input.closest('.image-input').querySelector('.image-input-wrapper');
+        wrapper.style.backgroundImage = '';
+        wrapper.classList.remove('image-input-wrapper-loaded');
+    });
+</script>
+
+<script>
+    // Define a function to initialize the editor after the page has loaded
+    function initializeCKEditor() {
+        // Check if ClassicEditor is already available (might be loaded from other sources)
+        if (typeof ClassicEditor !== 'undefined') {
+            createEditor();
+        } else {
+            // Load CKEditor script
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ckeditor.com/ckeditor5/38.0.1/classic/ckeditor.js';
+            script.onload = createEditor;
+            document.head.appendChild(script);
+        }
+    }
+
+    // Function to create and configure the editor
+    function createEditor() {
+        ClassicEditor
+            .create(document.querySelector('#kt_docs_ckeditor_document'), {
+                // Editor configuration
+                toolbar: [
+                    'heading',
+                    '|',
+                    'bold', 'italic', 'underline', 'strikethrough',
+                    '|',
+                    'bulletedList', 'numberedList',
+                    '|',
+                    'outdent', 'indent',
+                    '|',
+                    'link', 'blockQuote', 'insertTable', 'imageUpload',
+                    '|',
+                    'undo', 'redo'
+                ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
+                    ]
+                },
+                image: {
+                    toolbar: [
+                        'imageTextAlternative',
+                        'imageStyle:inline',
+                        'imageStyle:block',
+                        'imageStyle:side'
+                    ]
+                },
+                table: {
+                    contentToolbar: [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells'
+                    ]
+                }
+            })
+            .then(editor => {
+                // Store editor instance
+                window.editor = editor;
+                
+                // Set initial content if editing
+
+                // {% if edit and settings.deskripsi_aplikasi %}
+                // editor.setData('{{ settings.deskripsi_aplikasi|safe|escapejs }}');
+                // {% endif %}
+                
+                // Handle form submission - save editor content to hidden input
+                document.getElementById('profileForm').addEventListener('submit', function(event) {
+                    document.getElementById('frm_deskripsi').value = editor.getData();
+                    
+                    // Check if content is empty
+                    if (!document.getElementById('frm_deskripsi').value.trim()) {
+                        event.preventDefault();
+                        alert('Isi cerpen tidak boleh kosong');
+                        return false;
+                    }
+                    
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('submitBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...';
+                });
+            })
+            .catch(error => {
+                console.error('CKEditor initialization failed:', error);
+                // Show an error message to the user
+                const editorElement = document.querySelector('#kt_docs_ckeditor_document');
+                editorElement.innerHTML = '<div class="alert alert-danger">Editor gagal dimuat. Silakan refresh halaman.</div>';
+            });
+    }
+
+    // Wait for the DOM to be fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeCKEditor);
+    } else {
+        // DOM already loaded, initialize immediately
+        initializeCKEditor();
+    }
+
+</script>

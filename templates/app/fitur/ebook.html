@@ -1,0 +1,218 @@
+{% extends 'app/layout/base.html' %}
+
+{% load static %}
+{% block main %}
+
+<!-- Start Breadcrumb 
+============================================= -->
+<div class="breadcrumb-area text-center" style="background-image: url({% static 'app/assets/img/adnan/logo/bg.png' %}); background-size: cover; background-position: center; padding: 240px 0 120px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1;"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <h1 class="wow fadeInUp" data-wow-delay="500ms" data-wow-duration="400ms" style="color: white;">
+                    E-Book Ventra<strong><span class="blue-text">PLUS+</span></strong>
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center" style="background: transparent;">
+                        <li><a href="{% url 'app:index_app' %}"style="color: white;"><i class="fas fa-home"style="color: white;"></i> Home</a></li>
+                        <li class="active" style="color: white;">E-Book</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Breadcrumb -->
+
+
+<!-- Start fitur
+    ============================================= -->
+    <div class="gallery-style-one-area mt-40">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-9">
+                    <div class="site-heading">
+                        <h4 class="sub-title">LIHAT</h4>
+                        <h2 class="title">Rekomendasi E-Book Untuk Kamu Baca!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fill">
+            <div class="row">
+                <div class="gallery-style-one-carousel swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+
+                        <!-- Single Item -->
+                         {% for ebook in dt_ebook|slice:":5" %}
+                        <div class="swiper-slide">
+                            <div class="gallery-style-one" style="max-width: 480px; max-height: auto;">
+                                <img src="{{ ebook.cover.url }}" alt="Image Not Found">
+                                <div class="overlay">
+                                    <div class="info">
+                                        <h4><a href="{% url 'app:book_details_app' ebook.slug %}">{{ ebook.judul|safe }}</a></h4>
+                                        <span>{{ ebook.kategori_id.nama_kategori }}</span>
+                                        <p>
+                                            {{ ebook.sinopsis_ebook|truncatewords:10|safe }}
+                                        </p>
+                                    </div>
+                                    <a href="{% url 'app:book_details_app' ebook.slug %}">Mari Membaca  <i class="fas fa-long-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                         {% endfor %}
+                        <!-- End Single Item -->
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Gallery -->
+    
+    <!-- Start Team Area 
+    ============================================= -->
+    <div class="team-style-three-area default-padding bottom-less">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2">
+                    <div class="site-heading text-center">
+                        <h2 class="title">E-Book di VentraPlus </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+        <div class="container">
+          <div class="row">
+              <!-- Bagian Kiri: Kartu -->
+              <div class="col-xl-8 col-lg-7 col-md-12">
+                  <!-- Subjudul Pertama -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="sub-title mb-0">Sejarah</h4>
+                    <a href="{% url 'app:allbook_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                </div>                
+                  <div class="row">
+                      <!-- Card 1 -->
+                       {% for ebooksejarah in dt_ebook_sejarah|slice:":3" %}
+                      <div class="col-lg-4 col-md-6 mb-30">
+                          <div class="team-style-one-item">
+                              <div class="thumb">
+                                  <img src="{{ebooksejarah.cover.url}}" alt="Image Not Found">
+                                  
+                              </div>
+                              <div class="info">
+                                  <span>{{ ebooksejarah.penulis}}</span>
+                                  <h4><a href="{% url 'app:book_details_app' ebooksejarah.slug %}">{{ ebooksejarah.judul|safe }}</a></h4>
+                              </div>
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+      
+                  <!-- Subjudul Kedua -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="sub-title mb-0">Budaya</h4>
+                    <a href="{% url 'app:allbook_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                </div> 
+                  <div class="row">
+                      <!-- Card 4 -->
+                        {% for ebookbudaya in dt_ebook_budaya|slice:":3" %}
+                      <div class="col-lg-4 col-md-6 mb-30">
+                          <div class="team-style-one-item">
+                              <div class="thumb">
+                                  <img src="{{ebookbudaya.cover.url}}" alt="Image Not Found">
+                                  
+                              </div>
+                              <div class="info">
+                                  <span>{{ ebookbudaya.penulis }}</span>
+                                  <h4><a href="{% url 'app:book_details_app' ebookbudaya.slug %}">{{ ebookbudaya.judul|safe }}</a></h4>
+                              </div>
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+  
+                  <!-- Subjudul ketiga -->
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="sub-title mb-0">Kerohanian</h4>
+                    <a href="{% url 'app:allbook_app' %}" class="btn btn-link text-decoration-none">See All</a>
+                </div> 
+                  <div class="row">
+                      <!-- Card 4 -->
+                      {% for ebookkerohanian in dt_ebook_kerohanian|slice:":3" %}
+                      <div class="col-lg-4 col-md-6 mb-30">
+                          <div class="team-style-one-item">
+                              <div class="thumb">
+                                  <img src="{{ ebookkerohanian.cover.url }}" alt="Image Not Found">
+                                  
+                              </div>
+                              <div class="info">
+                                  <span>{{ ebookkerohanian.penulis }}</span>
+                                  <h4><a href="{% url 'app:book_details_app' ebookkerohanian.slug %}">{{ ebookkerohanian.judul|safe }}</a></h4>
+                              </div>
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+                  
+              </div>
+      
+              <!-- Bagian Kanan: Sidebar -->
+              <div class="sidebar col-xl-4 col-lg-5 col-md-12 mt-md-50 mt-xs-50">
+                  <aside>
+                      
+                    <div class="sidebar-item recent-post">
+                        <h4 class="title">Recent Post Ebook</h4>
+                        <ul>
+                            {% if dt_ebook %}
+                            {% for recent in dt_ebook|slice:":4" %}
+                            <li>
+                                <div class="thumb">
+                                    <a href="{% url 'app:book_details_app' recent.ebook_id %}">
+                                        <img src="{{ recent.cover.url }}" alt="Thumb">
+                                    </a>
+                                </div>
+                                <div class="info">
+                                    <div class="meta-title">
+                                        <span class="post-date">{{ recent.created_at|date:"d M, Y" }}</span>
+                                    </div>
+                                    <a href="{% url 'app:book_details_app' recent.ebook_id %}">
+                                        {{ recent.judul|truncatechars:300 }}
+                                    </a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% else %}
+                            <p> Data Tidak Tersedia </p>
+                            {% endif %}
+                            
+                            </ul>
+                    </div>
+                    <div class="sidebar-item category">
+                          <h4 class="title">category list Ebook</h4>
+                          <div class="sidebar-info">
+                              <ul>
+                                {% for list in dt_kategori %}
+                                    <li>
+                                        <a href="{% url 'app:allcerpen_app' %}">
+                                            {{ list.kategori_id__nama_kategori }}
+                                            <span>{{ list.total }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                          </div>
+                        </div>
+                </aside>
+          </div>
+      </div>
+      
+    </div>
+    <!-- End Team Area -->
+
+{% endblock  %}

@@ -1,0 +1,91 @@
+{% extends 'app/layout/base.html' %}
+
+{% load static %}
+{% block main %}
+
+<!-- Start Breadcrumb 
+============================================= -->
+<div class="breadcrumb-area text-center" style="background-image: url({% static 'app/assets/img/adnan/logo/bg.png' %}); background-size: cover; background-position: center; padding: 240px 0 120px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1;"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <h1 class="wow fadeInUp" data-wow-delay="500ms" data-wow-duration="400ms" style="color: white;">
+                    Profil <strong><span class="blue-text">Pejabat</span></strong>
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center" style="background: transparent;">
+                        <li><a href="{% url 'app:index_app' %}" style="color: white;"><i class="fas fa-home" style="color: white;"></i> Home</a></li>
+                        <li class="active" style="color: white;">Profil Pejabat</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Breadcrumb -->
+
+<!-- Start About
+    ============================================= -->
+    <div class="about-style-five-area bg-gray default-padding">
+        <div class="container bg-gray-secondary">
+            <div class="row align-center">
+                
+                {% for data_pejabat in dt_pejabat %}
+                <div class="col-lg-4 ml-50">
+                    <div class="thumb-style-five">
+                        <img src="{{ data_pejabat.images.url }}" alt="Image Not Found">
+                    </div>
+                </div>
+                <div class="col-lg-6 pl-80 pl-md-15 pl-xs-15">
+                    <div class="about-style-five-info"> 
+                        <div class="text-scroll-animation">
+                            <div class="col-xl-12 col-md-8 mt-50 ">
+                                <h4 class="sub-title">Kepala Bidang</h4>
+                                <div class="info">
+                                    <p>{{ data_pejabat.deskripsi | safe}} </p>
+                                    <a href="" class="btn-read-more">Read More <i class="fas fa-long-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- End About -->
+    
+    <!-- Start Partner 
+    ============================================= -->
+    <div class="partner-style-one-area default-padding bg-light" style="background-image: url({% static 'app/assets/img/shape/25.png' %});">
+        <div class="container">
+            <div class="row align-center">
+                <div class="col-xl-4">
+                    <h2 class="title">MITRA <br>VENTRA <span class="blue-text">PLUS+</span></h2>
+                </div>
+                <div class="col-xl-8 pl-60 pl-md-15 pl-xs-15 brand-one-contents">
+                    <div class="brand-style-one-items">
+                        <div class="brand-style-one-carousel swiper">
+                            <!-- Additional required wrapper -->
+                            <div class="swiper-wrapper">
+                                {% for data_patner in dt_patner %}
+                                <!-- Single Item -->
+                                <div class="swiper-slide">
+                                    <div class="brand-one">
+                                        <img src="{{ data_patner.images.url }}" alt="Image Not Found">
+                                    </div>
+                                </div>
+                                <!-- End Single Item -->
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Partner -->
+
+{% endblock main %}

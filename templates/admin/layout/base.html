@@ -1,0 +1,438 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		
+		{% include 'admin/layout/part_header.html' %}
+
+		{% block css %}
+		{% endblock css %}
+		
+	</head>
+	<body id="kt_app_body" data-kt-app-header-fixed-mobile="true" data-kt-app-toolbar-enabled="true" class="app-default">
+		<script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }
+		</script>
+		{% if messages %}
+         {% for message in messages %}
+           <div alt="{{message.tags}}" data="{{message}}" id="msg_pesan"></div>
+         {% endfor %}
+  		{% endif %}
+		<div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+			<div class="app-page flex-column flex-column-fluid" id="kt_app_page">
+				<div id="kt_app_header" class="app-header" data-kt-sticky="true" data-kt-sticky-activate="{default: false, lg: true}" data-kt-sticky-name="app-header-sticky" data-kt-sticky-offset="{default: false, lg: '300px'}">
+					<div class="app-container container-xxl d-flex align-items-stretch justify-content-between" id="kt_app_header_container">
+						<div class="d-flex align-items-center d-lg-none ms-n2 me-2" title="Show sidebar menu">
+							<div class="btn btn-icon btn-active-color-primary w-35px h-35px" id="kt_app_header_menu_toggle">
+								<i class="ki-outline ki-abstract-14 fs-2 text-white"></i>
+							</div>
+						</div>
+
+
+						<div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
+							<a href="{% url 'admin:index_admin_dashboard' %}">
+								<img alt="Logo" src="{% static 'admin/assets/media/logos/Ventraplus-.png' %}" class="h-25px d-lg-none" />
+								<img alt="Logo" src="{% static 'admin/assets/media/logos/Ventraplus-.png' %}" class="h-75px d-none d-lg-inline" />
+							</a>
+						</div>
+						
+						<div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1" id="kt_app_header_wrapper">
+							<div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
+								<div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
+									<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-0 me-lg-2 {% if request.resolver_match.url_name == 'index_admin_dashboard' %}here show menu-here-bg{% endif %}">
+        <a class="menu-link" href="{% url 'admin:index_admin_dashboard' %}">
+            <span class="menu-title">Dashboards</span>
+            <span class="menu-arrow d-lg-none"></span>
+        </a>
+										<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown p-0 w-100 w-lg-850px">
+											<div class="menu-state-bg menu-extended overflow-hidden overflow-lg-visible" data-kt-menu-dismiss="true">
+												<div class="row">
+													
+
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									
+									<!-- Menu Master - hanya untuk super_admin dan operator -->
+									{% if request.user.role == 'super_admin' or request.user.role == 'operator' %}
+										<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2 
+										{% if 'index_master_' in request.resolver_match.url_name %}here show menu-here-bg{% endif %}">
+											<span class="menu-link">
+												<span class="menu-title">Master</span>
+												<span class="menu-arrow d-lg-none"></span>
+											</span>
+											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px">
+												{% if request.user.role == 'super_admin' %}
+													<div class="menu-item">
+														<a class="menu-link" href="{% url 'admin:index_master_user' %}">
+															<span class="menu-bullet">
+																<span class="bullet bullet-dot"></span>
+															</span>
+															<span class="menu-title">Master User</span>
+														</a>
+													</div>
+												{% endif %}
+												<div class="menu-item">                                                        
+													<a class="menu-link" href="{% url 'admin:index_master_kategori' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Master Kategori</span>
+													</a>                                                        
+												</div>
+												<div class="menu-item">
+													<a class="menu-link" href="{% url 'admin:index_master_profile' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Master Profile</span>
+													</a>
+												</div>
+												<div class="menu-item">                                                        
+													<a class="menu-link" href="{% url 'admin:index_master_partner' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Master Partner</span>
+													</a>                                                        
+												</div>
+												<div class="menu-item">                                                        
+													<a class="menu-link" href="{% url 'admin:index_master_settings' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Master Setting aplikasi</span>
+													</a>                                                        
+												</div>
+												<div class="menu-item">                                                        
+													<a class="menu-link" href="{% url 'admin:index_master_slider' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Master Slider</span>
+													</a>                                                        
+												</div>
+											</div>
+										</div>
+									{% endif %}
+
+									<!-- Menu Konten - untuk semua role kecuali disesuaikan -->
+									{% if request.user.role == 'super_admin' or request.user.role == 'operator' or request.user.role == 'admin_pemda' or request.user.role == 'admin_dinas' or request.user.role == 'admin_sekolah' %}
+
+										<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2 
+										{% if 'index_e' in request.resolver_match.url_name %}here show menu-here-bg{% endif %}">
+											<span class="menu-link">
+												<span class="menu-title">Konten</span>
+												<span class="menu-arrow d-lg-none"></span>
+											</span>
+											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px">
+												<!-- Admin sekolah hanya bisa akses e-cerpen -->
+													<div class="menu-item">                                                        
+														<a class="menu-link" href="{% url 'admin:index_e_cerpen' %}">
+															<span class="menu-bullet">
+																<span class="bullet bullet-dot"></span>
+															</span>
+															<span class="menu-title">E-Cerpen</span>
+														</a>                                                        
+													</div>
+													<div class="menu-item">                                                        
+														<a class="menu-link" href="{% url 'admin:index_e_book' %}">
+															<span class="menu-bullet">
+																<span class="bullet bullet-dot"></span>
+															</span>
+															<span class="menu-title">E-Book</span>
+														</a>                                                        
+													</div>
+													<div class="menu-item">                                                        
+														<a class="menu-link" href="{% url 'admin:index_karya' %}">
+															<span class="menu-bullet">
+																<span class="bullet bullet-dot"></span>
+															</span>
+															<span class="menu-title">Karya</span>
+														</a>                                                        
+													</div>
+											</div>
+										</div>
+									{% endif %}
+
+									<!-- Menu Publikasi - untuk super_admin, operator, admin_pemda, admin_dinas -->
+									{% if request.user.role == 'super_admin' or request.user.role == 'operator' or request.user.role == 'admin_pemda' or request.user.role == 'admin_dinas' %}
+
+										<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2
+											{% if 'index_berita' in request.resolver_match.url_name %}here show menu-here-bg{% endif %} ">
+											<span class="menu-link">
+												<span class="menu-title">Publikasi</span>
+												<span class="menu-arrow d-lg-none"></span>
+											</span>
+											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px">
+												<div class="menu-item">
+													<a class="menu-link" href="{% url 'admin:index_berita' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Berita</span>
+													</a>
+												</div>
+											</div>
+										</div>
+									{% endif %}
+
+									<!-- Menu Pengaduan - untuk super_admin, operator, admin_pemda, admin_dinas -->
+									{% if request.user.role == 'super_admin' or request.user.role == 'operator' or request.user.role == 'admin_pemda' or request.user.role == 'admin_dinas' %}
+										<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2
+										{% if 'index_pengaduan' in request.resolver_match.url_name %}here show menu-here-bg{% endif %} ">        
+											<span class="menu-link">
+												<span class="menu-title">Pengaduan</span>
+												<span class="menu-arrow d-lg-none"></span>
+											</span>
+											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px">
+												<div class="menu-item">
+													<a class="menu-link" href="{% url 'admin:index_pengaduan' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Data Pengaduan</span>
+													</a>
+												</div>
+											</div>
+										</div>
+									{% endif %}
+
+									<!-- Menu Laporan - untuk super_admin, operator, admin_pemda, admin_dinas -->
+									{% if request.user.role == 'super_admin' or request.user.role == 'operator' or request.user.role == 'admin_pemda' or request.user.role == 'admin_dinas' or request.user.role == 'admin_sekolah' %}
+										<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2
+										{% if 'laporan' in request.resolver_match.url_name %}here show menu-here-bg{% endif %} ">        
+											<span class="menu-link">
+												<span class="menu-title">Laporan</span>
+												<span class="menu-arrow d-lg-none"></span>
+											</span>
+											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px">
+												<div class="menu-item">
+													<a class="menu-link" href="{% url 'admin:laporan' %}">
+														<span class="menu-bullet">
+															<span class="bullet bullet-dot"></span>
+														</span>
+														<span class="menu-title">Laporan</span>
+													</a>
+												</div>
+											</div>
+										</div>
+									{% endif %}
+
+
+								</div>
+							</div>
+							<div class="app-navbar flex-shrink-0">
+								
+								<div class="app-navbar-item ms-5" id="kt_header_user_menu_toggle">
+									<div class="cursor-pointer symbol symbol-35px symbol-md-45px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
+										{% if request.user.images %}
+										<img alt="Avatar" src="{{ request.user.images.url }}" style="object-fit: cover;" />
+									{% else %}
+										<img alt="Avatar" src="{% static 'admin/assets/media/avatars/default.jpg' %}" />
+									{% endif %}
+									</div>
+									<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px" data-kt-menu="true">
+										<div class="menu-content d-flex align-items-center px-3">
+											<div class="symbol symbol-50px me-5">
+												{% if request.user.images %}
+												<img alt="Avatar" src="{{ request.user.images.url }}" style="object-fit: cover;" />
+											{% else %}
+												<img alt="Avatar" src="{% static 'admin/assets/media/avatars/default.jpg' %}" />
+											{% endif %}
+											</div>
+											<div class="d-flex flex-column">
+												<div class="fw-bold d-flex align-items-center fs-5">
+													{{ request.user.username }}
+													<span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">{{ request.user.role|title }}</span>
+												</div>
+												<a href="#" class="fw-semibold text-muted text-hover-primary fs-7">
+													{{ request.user.email }}
+												</a>
+											</div>
+										</div>
+										
+										<div class="separator my-2"></div>
+										<div class="menu-item px-5">
+											<a href="{% url 'admin:index_profile' %}" class="menu-link px-5">My Profile</a>
+										</div>
+										<div class="separator my-2"></div>
+										<div class="menu-item px-5" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="left-start" data-kt-menu-offset="-15px, 0">
+											<a href="#" class="menu-link px-5">
+												<span class="menu-title position-relative">Mode 
+												<span class="ms-5 position-absolute translate-middle-y top-50 end-0">
+													<i class="ki-outline ki-night-day theme-light-show fs-2"></i>
+													<i class="ki-outline ki-moon theme-dark-show fs-2"></i>
+												</span></span>
+											</a>
+											<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-gray-500 menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px" data-kt-menu="true" data-kt-element="theme-mode-menu">
+												<div class="menu-item px-3 my-0">
+													<a href="#" class="menu-link px-3 py-2" data-kt-element="mode" data-kt-value="light">
+														<span class="menu-icon" data-kt-element="icon">
+															<i class="ki-outline ki-night-day fs-2"></i>
+														</span>
+														<span class="menu-title">Light</span>
+													</a>
+												</div>
+												<div class="menu-item px-3 my-0">
+													<a href="#" class="menu-link px-3 py-2" data-kt-element="mode" data-kt-value="dark">
+														<span class="menu-icon" data-kt-element="icon">
+															<i class="ki-outline ki-moon fs-2"></i>
+														</span>
+														<span class="menu-title">Dark</span>
+													</a>
+												</div>
+											</div>
+										</div>
+										
+										<div class="menu-item px-5">
+											<a href="#" class="menu-link px-5" id="signOutButton" data-url="{% url 'admin:logout' %}">Sign Out</a>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+					<div id="kt_app_toolbar" class="app-toolbar">
+						<div id="kt_app_toolbar_container" class="app-container container-xxl d-flex align-items-start">
+							<div class="d-flex flex-column flex-row-fluid">
+								<div class="d-flex align-items-center pt-1"></div>
+								<div class="page-title d-flex align-items-center me-3 mb-4 pt-9 pt-lg-17 mb-lg-15">
+								{% include 'admin/layout/navbar.html' %}
+								</div>
+								
+							</div>
+						</div>
+					</div>
+					<div class="app-container container-xxl">
+						
+						<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+							{% block main %} {% endblock main %}
+							
+						</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
+			<i class="ki-outline ki-arrow-up"></i>
+		</div>
+		
+		<!-- {% static '<script>var hostUrl = "admin/assets/";</script>' %} -->
+		<script src="{% static 'admin/assets/plugins/global/plugins.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/js/scripts.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js' %}"></script>
+		<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/geodata/continentsLow.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/geodata/usaLow.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZonesLow.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZoneAreasLow.js"></script>
+		<script src="{% static 'admin/assets/plugins/custom/datatables/datatables.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/js/widgets.bundle.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/widgets.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/apps/chat/chat.js' %}"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/upgrade' %}-plan.js"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/new' %}-target.js"></script>
+		<script src="{% static 'admin/assets/js/custom/utilities/modals/users' %}-search.js"></script>
+
+		{% block js %}
+		{% endblock js %}
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				if (typeof KTMenu !== 'undefined') {
+					KTMenu.createInstances();
+				}
+			});
+		</script>
+		
+		<script type="text/javascript">
+			function show_notif(meseg,jenis_icon){
+				if(jenis_icon == 'error'){
+					button_style = 'btn-danger'
+				}else{
+					button_style = `btn-${jenis_icon}`;
+				}
+				
+				Swal.fire({
+			        html: meseg,
+			        icon: jenis_icon,
+			        buttonsStyling: false,
+			        confirmButtonText: "Ok",
+			        customClass: {
+								confirmButton: `btn ${button_style}`
+			                }
+			    });
+			}
+
+			if ($('#msg_pesan').length){
+			    show_notif($("#msg_pesan").attr('data'), $("#msg_pesan").attr('alt'));
+			}
+
+			const defaultOption = document.getElementById("default-year");
+			
+			if (defaultOption) {
+				const currentYear = new Date().getFullYear();
+				defaultOption.value = currentYear;
+				defaultOption.textContent = currentYear;
+			}
+		
+		</script>
+<script>
+    $('#signOutButton').on('click', function (e) {
+        e.preventDefault();
+        const logoutUrl = $(this).data('url');
+
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            text: "Sesi Anda akan diakhiri.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, keluar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: logoutUrl,
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'  // untuk Django
+                    },
+                    success: function () {
+                        Swal.fire(
+                            'Berhasil!',
+                            'Anda telah keluar.',
+                            'success'
+                        ).then(() => {
+                            window.location.href = "{% url 'admin:index_login' %}";  // Redirect ke halaman login atau home
+                        });
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Gagal!',
+                            'Terjadi kesalahan saat logout.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+	</body>
+</html>

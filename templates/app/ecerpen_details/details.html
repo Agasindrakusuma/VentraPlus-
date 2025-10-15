@@ -1,0 +1,197 @@
+{% extends 'app/layout/base.html' %}
+
+{% load static %}
+{% block main %}
+
+<!-- Start Breadcrumb 
+============================================= -->
+<div class="breadcrumb-area text-center" style="background-image: url({% static 'app/assets/img/adnan/logo/bg.png' %}); background-size: cover; background-position: center; padding: 240px 0 120px;">
+  <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1;"></div>
+
+  <div class="container" style="position: relative; z-index: 2;">
+      <div class="row">
+          <div class="col-lg-8 offset-lg-2">
+              <h1 class="wow fadeInUp" data-wow-delay="500ms" data-wow-duration="400ms" style="color: white;">
+                  E-Cerpen Ventra<strong><span class="blue-text">PLUS+</span></strong>
+              </h1>
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb justify-content-center" style="background: transparent;">
+                      <li><a href="{% url 'app:index_app' %}"style="color: white;"><i class="fas fa-home"style="color: white;"></i> Home</a></li>
+                      <li class="active" style="color: white;">E-Cerpen</li>
+                  </ol>
+              </nav>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- End Breadcrumb -->
+
+<div class="services-content bg-gray pt-40">
+    <div class="container">
+        <div class="about-style-one-items">
+            <div class="row">
+                <div class="col-xl-4 col-lg-6 ms-lg-5">
+                    <div class="thumb-style-one">
+                        <img src="{{ details_ecerpen.cover.url }}" alt="Image Not Found">
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-6 ps-xl-4 ps-md-3 ps-2 ms-lg-3">
+                    <div class="about-style-one-info">
+                        <div class="content mt-lg-2  ms-lg-5">
+                            <h2 class="title">{{ details_ecerpen.judul|safe }}</h2>
+                            
+                            <table class=" mt-lg-5">
+                                <tr>
+                                    <td width="200"><h5>Penulis</h5></td>
+                                    <td width="30"><h5>: </h5></td>
+                                    <td><h5 class="text-secondary">{{ details_ecerpen.penulis|safe }}</h5></td>
+                                </tr>
+                                <tr>
+                                    <td><h5>Tanggal Publikasi</h5></td>
+                                    <td><h5> : </h5></td>
+                                    <td><h5 class="text-secondary">{{ details_ecerpen.tanggal_publikasi|date:" d F Y" }}</h5></td>
+                                </tr>
+                                <tr>
+                                    <td><h5>Untuk Usia</h5></td>
+                                    <td><h5>: </h5></td>
+                                    <td><h5 class="text-secondary">{{ details_ecerpen.batas_usia }}</h5></td>
+                                </tr>
+                                <tr>
+                                    <td><h5>Durasi Membaca</h5></td>
+                                    <td><h5>: </h5></td>
+                                    <td><h5 class="text-secondary">{{ details_ecerpen.durasi_baca}}</h5></td>
+                                </tr>
+                                <tr>
+                                    <td><h5>Kategori</h5></td>
+                                    <td><h5>: </h5></td>
+                                    <td><h5 class="text-primary sub-title" style="font-size: 16px;">{{ details_ecerpen.kategori_id.nama_kategori }}</h5></td>
+                                </tr>
+                            </table>
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div> 
+                
+                <div class="services-content pt-130 pb-50">
+                    <div>
+                        <div class="row">
+                            <div class="col-lg-12 mt--140">
+                                <div class="accordion mt-50" id="faqAccordion">
+                                    <div class="accordion-item accordion-style-one">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                Sinopsis Ecerpen "{{ details_ecerpen.judul|safe }}"
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body">
+                                                <p>
+                                                    {{ details_ecerpen.sinopsis|safe }}                                                
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item accordion-style-one">
+                                        <h2 class="accordion-header" id="headingThree">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                <span class="text-primary sub-title" style="font-size: 16px;">Unduh PDF</span>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body text-center">
+                                                {% if details_ecerpen.path_ecerpen %}
+                                                    <div class="d-flex flex-column h-100 align-items-center">
+                                                        <!-- Area preview PDF -->
+                                                        <div class="border rounded position-relative mb-4" style="height: 600px; width: 100%; max-width: 930px; overflow: auto;">
+                                                            {% if details_ecerpen.path_ecerpen.name|lower|slice:'-4:' == '.pdf' %}
+                                                                <div id="pdf-viewer-container" style="min-height: 100%;"></div>
+                                
+                                                                <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+                                                                <script>
+                                                                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                                                                    let currentPage = 1;
+                                                                    let pdfDoc = null;
+                                                                    let scale = 1.5;
+                                
+                                                                    function renderPage(pageNum) {
+                                                                        pdfDoc.getPage(pageNum).then(function(page) {
+                                                                            const container = document.getElementById('pdf-viewer-container');
+                                                                            const viewport = page.getViewport({ scale: scale });
+                                                                            const canvas = document.createElement('canvas');
+                                                                            const ctx = canvas.getContext('2d');
+                                                                            canvas.height = viewport.height;
+                                                                            canvas.width = viewport.width;
+                                                                            canvas.style.marginBottom = '20px';
+                                                                            canvas.style.display = 'block';
+                                                                            container.appendChild(canvas);
+                                                                            page.render({ canvasContext: ctx, viewport: viewport });
+                                                                            if (pageNum < pdfDoc.numPages) {
+                                                                                currentPage++;
+                                                                                renderPage(currentPage);
+                                                                            }
+                                                                        });
+                                                                    }
+                                
+                                                                    function loadPDF(url) {
+                                                                        const container = document.getElementById('pdf-viewer-container');
+                                                                        container.innerHTML = `
+                                                                            <div class="text-center p-5">
+                                                                                <div class="spinner-border text-primary" role="status">
+                                                                                    <span class="visually-hidden">Loading...</span>
+                                                                                </div>
+                                                                                <p class="mt-3">Memuat dokumen...</p>
+                                                                            </div>
+                                                                        `;
+                                                                        pdfjsLib.getDocument(url).promise
+                                                                            .then(function(pdf) {
+                                                                                pdfDoc = pdf;
+                                                                                container.innerHTML = '';
+                                                                                renderPage(1);
+                                                                            })
+                                                                            .catch(function(error) {
+                                                                                container.innerHTML = `
+                                                                                    <div class="alert alert-danger m-3">
+                                                                                        <p>Gagal memuat PDF. Silakan unduh file untuk melihat isinya.</p>
+                                                                                        <a href="${url}" class="btn btn-danger" download>
+                                                                                            <i class="ki-outline ki-download fs-5"></i> Unduh
+                                                                                        </a>
+                                                                                    </div>
+                                                                                `;
+                                                                                console.error('PDF.js error:', error);
+                                                                            });
+                                                                    }
+                                
+                                                                    loadPDF("{{ details_ecerpen.path_ecerpen.url }}");
+                                                                </script>
+                                                            {% else %}
+                                                                <div class="alert alert-info m-4">
+                                                                    <p>Format file tidak mendukung preview. Silakan unduh untuk melihat isinya.</p>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="alert alert-warning">
+                                                        Tidak ada dokumen yang diunggah
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock main %}

@@ -1,0 +1,816 @@
+{% extends 'admin/layout/base.html' %}
+{% load static %}
+
+{% block main %}
+<form method="post"  id="karyaForm" enctype="multipart/form-data" action="{% if edit %}{% url 'admin:edit_karya' karya.karya_id %}{% else %}{% url 'admin:tambah_karya' %}{% endif %}" >
+{% csrf_token %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-dismissible alert-{{ message.tags }}">
+            <div class="alert-text">{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row mt-15" id="kt_stepper_example_vertical">
+
+    <div class="d-flex flex-row-auto w-100 w-lg-300px">
+    <div class="stepper-nav flex-cente">
+        <div class="stepper-item me-10 current" data-kt-stepper-element="nav">
+            <div class="stepper-wrapper d-flex align-items-center">
+                <div class="stepper-icon w-40px h-40px">
+                    <i class="stepper-check fas fa-check"></i>
+                    <span class="stepper-number">1</span>
+                </div>
+
+                <div class="stepper-label">
+                    <h3 class="stepper-title">
+                        Step 1
+                    </h3>
+
+                    <div class="stepper-desc">
+                        Description
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper-line h-40px"></div>
+        </div>
+
+        <div class="stepper-item me-5" data-kt-stepper-element="nav">
+            <div class="stepper-wrapper d-flex align-items-center">
+                <div class="stepper-icon w-40px h-40px">
+                    <i class="stepper-check fas fa-check"></i>
+                    <span class="stepper-number">2</span>
+                </div>
+
+                <div class="stepper-label">
+                    <h3 class="stepper-title">
+                        Step 2
+                    </h3>
+
+                    <div class="stepper-desc">
+                        Description
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper-line h-40px"></div>
+        </div>
+
+        
+    </div>
+    </div>
+
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general" aria-selected="true" role="tab">Karya</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <div class="card card-flush py-4">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>{% if edit %}Edit{% else %}Tambah{% endif %} Karya</h2>
+                            </div>
+                        </div>
+                    
+            <div class="card-body pt-0">
+                <div class="flex-column current" data-kt-stepper-element="content">
+                    <div class="fv-row mb-10">
+                        <label class="form-label">Judul Karya</label>
+                        <input type="text" class="form-control form-control-solid" value="{{ karya.judul_karya }}" name="frm_judul" placeholder="Judul Karya" required/>
+                    </div>
+
+                    
+                    <!-- <div class="fv-row mb-10">
+                        <label class="form-label">Penulis</label>
+                        <input type="text" class="form-control form-control-solid" value="{{ karya.penulis }}" name="frm_penulis" placeholder="Nama Penulis" required>
+                    </div> -->
+
+                    <!-- <div class="fv-row mb-10">
+                        <select class="form-select form-control-solid" name="frm_batas_usia" required>
+                            <option value="">Pilih Batas Usia</option>
+                            <option value="Semua Umur" {% if karya.batas_usia == 'Semua Umur' %}selected{% endif %}>Semua Umur</option>
+                            <option value="13+" {% if karya.batas_usia == '13+' %}selected{% endif %}>13 Tahun ke Atas</option>
+                            <option value="17+" {% if karya.batas_usia == '17+' %}selected{% endif %}>17 Tahun ke Atas</option>
+                            <option value="18+" {% if karya.batas_usia == '18+' %}selected{% endif %}>18 Tahun ke Atas</option>
+                        </select>
+                    </div> -->
+                    
+                    <!-- <div class="fv-row mb-10">
+                        <label class="form-label">Tanggal Publikasi</label>
+                        <input type="date" class="form-control form-control-solid" value="{{ karya.tanggal_publikasi|date:'Y-m-d' }}" name="frm_tanggal_publikasi" placeholder="Tanggal Publikasi" required />
+                    </div> -->
+
+                    <div class="fv-row mb-10">
+                        <select class="form-select form-control-solid" name="frm_kategori" data-control="select2"  required>
+                            <option value="">Pilih Kategori</option>
+                            {% for data_kategori in dt_kategori %}
+                                <option value="{{ data_kategori.pk }}"
+                                        {% if edit and karya.kategori_id and karya.kategori_id.pk == data_kategori.pk %}
+                                            selected
+                                        {% endif %}
+                                >
+                                    {{ data_kategori.nama_kategori }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="fv-row mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Deskripsi</label>
+                        <div id="kt_docs_ckeditor_document">
+                            {% if edit and karya.deskripsi_karya %}
+                                {{ karya.deskripsi_karya|safe }}
+                            {% endif %}
+                        </div>
+                        <input type="hidden" name="frm_deskripsi" id="frm_deskripsi" 
+                               value="{% if edit and karya.deskripsi_karya %}{{ karya.deskripsi_karya|escapejs }}{% endif %}" required>
+                        <div class="text-muted fs-7 mt-2">Tulis Deskripsi di sini.</div>
+                    </div>
+
+                </div>
+
+
+                    <div class="flex-column" data-kt-stepper-element="content">
+                        <div class="card-body pt-0">
+                            <div class="row g-10 mb-10">
+                                <!-- COVER -->
+                                <div class="col-md-6">
+                                    <div class="card card-flush h-100">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Cover</h2>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center pt-0">
+                                            <style>
+                                                .image-input-placeholder { 
+                                                    background-image: url('/static/admin/assets/media/svg/files/blank-image.svg'); 
+                                                } 
+                                                [data-bs-theme="dark"] .image-input-placeholder { 
+                                                    background-image: url('admin/assets/media/svg/files/blank-image-dark.svg'); 
+                                                }
+                                            </style>
+                                            <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true">
+                                                <div class="image-input-wrapper w-150px h-150px"
+                                                {% if cover %}
+                                                style="background-image: url('{{ cover.file.url }}');"
+                                            {% endif %}
+                                            ></div>
+                                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                    data-kt-image-input-action="change">
+                                                    <i class="ki-outline ki-pencil fs-7"></i>
+                                                    <input type="file" name="frm_cover" accept=".png, .jpg, .jpeg">
+                                                </label>
+                                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                    data-kt-image-input-action="cancel"
+                                                    data-bs-toggle="tooltip"
+                                                    aria-label="Cancel cover"
+                                                    data-bs-original-title="Cancel cover">
+                                                    <i class="ki-outline ki-cross fs-2"></i>
+                                                </span>
+                                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                    data-kt-image-input-action="remove"
+                                                    data-bs-toggle="tooltip"
+                                                    aria-label="Remove cover"
+                                                    data-bs-original-title="Remove cover">
+                                                    <i class="ki-outline ki-cross fs-2"></i>
+                                                </span>
+                                            </div>
+                                            <div class="text-muted fs-7">Format: *.png, *.jpg, *.jpeg (max 2MB)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <!-- FILE PDF -->
+                                <div class="col-md-6">
+                                    <div class="card card-flush h-100">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>File Karya (PDF)</h2>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-0">
+                                            <div class="fv-row mb-10">
+                                                <input type="file" class="form-control form-control-solid" name="frm_path" accept=".pdf"/>
+                                                {% if edit and pdf_file %}
+                                                <div class="mt-2">
+                                                    <span>File saat ini: </span>
+                                                    <a href="{{ pdf_file.file.url }}" target="_blank">{{ pdf_file.nama_file }}</a>
+                                                </div>
+                                            {% endif %}
+                                                <div class="text-muted fs-7">Format: *.pdf (max 10MB)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <!-- SLIDER GALLERY -->
+                                <div class="card-body border-top p-9" data-select2-id="select2-data-145-ctre">
+                                    <!--begin::Input group-->
+                                    <div class="row mb-5 mt-5">
+                                        <div class="col-sm-4">
+                                            <div class="col-12">
+                                                <label for="dokumen_katalog" class="form-label mb-8">Upload File Gallery</label>
+                                                <div class="position-relative">
+                                                    <div class="card h-100 flex-center bg-light-primary border-primary border border-dashed p-8">
+                                                        <img src="{% static 'admin/assets/media/svg/files/upload.svg' %}" class="mb-5" alt="" />
+                                                        <a href="#" class="text-hover-primary fs-5 fw-bold mb-2">Upload File</a>
+                                                        <div class="fs-7 fw-semibold text-gray-500">Drag and drop files here</div>
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#manage_slider" role="button"
+                                                        class="stretched-link opacity-0 cursor-pointer position-absolute w-100 h-100 top-0 start-0"
+                                                        style="z-index: 1;"></a>
+                                                                                                         </div> 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ganti seluruh bagian gallery preview dengan ini -->
+                                        <div class="row mb-5" id="galleryPreview">
+                                            {% for gallery_file in gallery_files %}
+                                            <div class="col-sm-4 mb-6 gallery-preview-item" data-preview-id="gallery-{{ gallery_file.konten_karya_id}}" data-from-database="true">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body d-flex flex-column align-items-center p-3">
+                                                        <div class="position-relative mb-3 w-100">
+                                                            <span class="badge shadow-lg position-absolute top-0 start-0 m-2 z-index-2 
+                                                                {% if gallery_file.file.url|lower|slice:'-4:' == '.mp4' or gallery_file.file.url|lower|slice:'-4:' == '.mov' or gallery_file.file.url|lower|slice:'-4:' == '.avi' %}badge-light-primary{% else %}badge-light-info{% endif %}">
+                                                                {% if gallery_file.file.url|lower|slice:'-4:' == '.mp4' or gallery_file.file.url|lower|slice:'-4:' == '.mov' or gallery_file.file.url|lower|slice:'-4:' == '.avi' %}Video{% else %}Image{% endif %}
+                                                            </span>
+                                                            <div class="symbol symbol-175px symbol-2by3 overflow-hidden rounded-3 w-100 ratio ratio-4x3">
+                                                                {% if gallery_file.file.url|lower|slice:'-4:' == '.mp4' or gallery_file.file.url|lower|slice:'-4:' == '.mov' or gallery_file.file.url|lower|slice:'-4:' == '.avi' %}
+                                                                <video controls class="w-100 h-100 object-fit-cover">
+                                                                    <source src="{{ gallery_file.file.url }}" type="video/mp4">
+                                                                </video>
+                                                                {% else %}
+                                                                <img src="{{ gallery_file.file.url }}" class="w-100 h-100 object-fit-cover">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex gap-2">
+                                                            <button type="button" class="btn btn-sm btn-light-primary" onclick="editGalleryPreview('gallery-{{ gallery_file.konten_karya_id}}')">
+                                                                <i class="ki-duotone ki-pencil"></i> Ubah
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-light-danger" onclick="removeGalleryPreview('gallery-{{ gallery_file.konten_karya_id}}')">
+                                                                <i class="ki-duotone ki-trash"></i> Hapus
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        
+                                        
+    
+                                        <!-- Modal Manage Slider -->
+                                        <!-- Modal Manage Slider -->
+
+                                        <div class="modal fade" id="editGalleryModal" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <form id="editGalleryForm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5>Edit Galeri</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input type="hidden" id="editId" name="id">
+                                                            <div class="mb-3">
+                                                                <label>Judul</label>
+                                                                <input type="text" id="editTitle" name="title" class="form-control">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Deskripsi</label>
+                                                                <textarea id="editDesc" name="description" class="form-control"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        
+
+<div class="modal fade" tabindex="-1" id="manage_slider">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Gallery</h3>
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-5 mt-5">
+                    <!-- Jenis Slider -->
+                    <div class="col-6 mb-8">
+                        <label class="form-label mb-6">Jenis Gallery</label>
+                        <select id="jenisSlider" class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Jenis Gallery">
+                            <option></option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+
+                    <!-- Image Input -->
+                    <div id="imageSection" class="col-6 mb-8" style="display:none;">
+                        <label class="form-label mb-6">Image Gallery</label>
+                        <div class="image-input image-input-outline image-input-empty shadow"
+                            data-kt-image-input="true" style="background-image: url({% static 'admin/assets/media/svg/files/blank-image.svg' %}); background-size: contain; background-repeat: no-repeat; background-position: center;">
+                            <div class="image-input-wrapper w-300px h-200px image-input-placeholder"></div>
+                            <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change image">
+                                <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
+                                <input type="file" id="imageInput" accept=".png, .jpg, .jpeg" />
+                            </label>
+                            <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove image">
+                                <i class="ki-outline ki-cross fs-3"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Video Input -->
+                    <!-- Video Input -->
+                    <div id="videoSection" class="col-6 mb-8" style="display:none;">
+                        <label class="form-label mb-6">Video Gallery</label>
+                        <div class="image-input image-input-outline image-input-empty shadow">
+                            
+                            <!-- Container yang sama dengan image input -->
+                            <div class="image-input-wrapper w-300px h-200px image-input-placeholder">
+                                <video id="videoPreview" controls style="display: none; width: 100%; height: 100%; object-fit: cover;"></video>
+                            </div>
+                            
+                            
+                            <!-- Tombol Change (sama dengan image) -->
+                            <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change video">
+                                <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
+                                <input type="file" id="videoInput" accept="video/*,.mp4,.webm,.ogg" />
+                            </label>
+                            
+                            <!-- Tombol Remove (sama dengan image) -->
+                            <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove video">
+                                <i class="ki-outline ki-cross fs-3"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addToPreviewBtn">Add to Preview</button>
+            </div>
+        </div>
+    </div>
+</div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <!-- Slider Loop -->
+                                        
+                                    </div>
+    
+                                    <!--end::Input group-->
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                
+                
+            
+            
+            </div>
+            
+                
+
+        </form>
+    </div>
+    <div class="d-flex flex-stack">
+        <div class="mb-2">
+            <a href="{% url 'admin:index_karya' %}" class="btn btn-light btn-active-light-danger me-2">
+                <i class="ki-outline ki-cross fs-2"></i> Batal
+            </a>
+            <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                Back
+            </button>
+        </div>
+    
+        <div class="d-flex flex-stack pt-10">
+
+            <div>
+                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">
+                    Lanjut <i class="ki-outline ki-arrow-right fs-4 ms-1 me-0"></i>
+                </button>
+                <button type="submit" class="btn btn-lg btn-success" data-kt-stepper-action="submit" id="submitBtn">
+                    <span class="indicator-label">
+                        <i class="ki-outline ki-check fs-3 ms-2 me-0"></i> Simpan
+                    </span>
+                    <span class="indicator-progress">
+                        Menyimpan... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+    // Inisialisasi menu dropdown untuk gallery
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inisialisasi semua menu dropdown
+        const menuTriggers = document.querySelectorAll('[data-kt-menu-trigger]');
+        
+        menuTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const menuId = this.getAttribute('data-kt-menu-id');
+                const menu = document.getElementById(menuId);
+                
+                if (menu) {
+                    const isShown = menu.style.display === 'block';
+                    
+                    // Sembunyikan semua menu lainnya
+                    document.querySelectorAll('[data-kt-menu]').forEach(m => {
+                        m.style.display = 'none';
+                    });
+                    
+                    // Toggle menu ini
+                    menu.style.display = isShown ? 'none' : 'block';
+                    
+                    // Atur posisi
+                    if (!isShown) {
+                        const rect = this.getBoundingClientRect();
+                        menu.style.position = 'absolute';
+                        menu.style.top = `${rect.bottom + window.scrollY}px`;
+                        menu.style.left = `${rect.left + window.scrollX}px`;
+                    }
+                }
+            });
+        });
+        
+        // Tutup menu saat klik di luar
+        document.addEventListener('click', function() {
+            document.querySelectorAll('[data-kt-menu]').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
+        
+        // Cegah event bubbling dari menu itu sendiri
+        document.querySelectorAll('[data-kt-menu]').forEach(menu => {
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    });
+    
+    // Fungsi untuk menangani perubahan file
+    function handleFileChange(input) {
+        if (input.files && input.files[0]) {
+            const form = input.closest('form');
+            if (form) {
+                form.submit();
+            }
+        }
+    }
+    </script>
+
+
+
+<link href="{% static 'admin/assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css"/>
+<script src="{% static 'admin/assets/js/scripts.bundle.js' %}"></script>\
+<script>
+    // Stepper lement
+var element = document.querySelector("#kt_stepper_example_vertical");
+
+// Initialize Stepper
+var stepper = new KTStepper(element);
+
+// Handle next step
+stepper.on("kt.stepper.next", function (stepper) {
+    stepper.goNext(); // go next step
+});
+
+// Handle previous step
+stepper.on("kt.stepper.previous", function (stepper) {
+    stepper.goPrevious(); // go previous step
+});
+</script>
+<script>
+    $(document).ready(function() {
+        // Initialize Select2
+        $('[data-control="select2"]').select2({
+            placeholder: $(this).data('placeholder'),
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
+    // Fungsi yang lebih robust untuk inisialisasi CKEditor
+    function initializeEditor() {
+        // Pastikan elemen editor ada
+        const editorElement = document.querySelector('#kt_docs_ckeditor_document');
+        if (!editorElement) return;
+    
+        // Load CKEditor jika belum ada
+        if (typeof ClassicEditor === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ckeditor.com/ckeditor5/38.0.1/classic/ckeditor.js';
+            script.onload = setupCKEditor;
+            script.onerror = handleEditorError;
+            document.head.appendChild(script);
+        } else {
+            setupCKEditor();
+        }
+    }
+    
+    function setupCKEditor() {
+        ClassicEditor
+        .create(document.querySelector('#kt_docs_ckeditor_document'), {
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough', '|',
+                'bulletedList', 'numberedList', '|',
+                'outdent', 'indent', '|',
+                'link', 'blockQuote', 'insertTable', 'imageUpload', '|',
+                'undo', 'redo'
+            ],
+            // Konfigurasi lainnya
+        })
+        .then(editor => {
+            window.editorInstance = editor;
+            
+            // Update hidden input saat content berubah
+            editor.model.document.on('change:data', () => {
+                document.getElementById('frm_deskripsi').value = editor.getData();
+            });
+            
+            // Set data awal jika edit mode - INI YANG DIPERBAIKI
+            const initialContent = document.getElementById('kt_docs_ckeditor_document').innerHTML.trim();
+            if (initialContent) {
+                editor.setData(initialContent);
+                document.getElementById('frm_deskripsi').value = initialContent;
+            }
+            
+            const form = document.getElementById('karyaForm') || document.querySelector('form[method="post"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Pastikan data terupdate
+                    const editorData = editor.getData();
+                    document.getElementById('frm_deskripsi').value = editorData;
+                    
+                    // Validasi - pastikan tidak kosong
+                    if (!editorData.trim()) {
+                        e.preventDefault();
+                        alert('Deskripsi tidak boleh kosong');
+                        return false;
+                    }
+                });
+            }
+        })
+        .catch(handleEditorError);
+}
+    function handleEditorError(error) {
+        console.error('Editor error:', error);
+        const editorElement = document.querySelector('#kt_docs_ckeditor_document');
+        if (editorElement) {
+            editorElement.innerHTML = `
+                <div class="alert alert-danger">
+                    Gagal memuat editor teks. Silakan coba refresh halaman.
+                    <textarea name="frm_deskripsi" class="form-control mt-2" rows="5" required>${document.getElementById('frm_deskripsi').value}</textarea>
+                </div>
+            `;
+        }
+    }
+    
+    // Inisialisasi saat DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEditor);
+    } else {
+        initializeEditor();
+    }
+    </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let galleryFiles = [];
+        let galleryCounter = 0;
+        let editingPreviewId = null;
+    
+        const jenisSlider = $('#jenisSlider');
+        const imageSection = document.getElementById("imageSection");
+        const videoSection = document.getElementById("videoSection");
+        const imageInput = document.getElementById("imageInput");
+        const videoInput = document.getElementById("videoInput");
+        const addToPreviewBtn = document.getElementById("addToPreviewBtn");
+        const galleryPreview = document.getElementById("galleryPreview");
+        const videoPreview = document.getElementById("videoPreview");
+        const manageSliderModal = new bootstrap.Modal(document.getElementById("manage_slider"));
+        const karyaForm = document.getElementById("karyaForm");
+    
+        // Tambahkan item dari database ke galleryFiles
+        // Tambahkan item dari database ke galleryFiles
+        const initialFiles = [
+            {% for gallery_file in gallery_files %}
+            {
+                id: 'gallery-{{ gallery_file.konten_karya_id }}',
+                type: '{% if gallery_file.file.url|lower|slice:"-4:" == ".mp4" or gallery_file.file.url|lower|slice:"-4:" == ".mov" or gallery_file.file.url|lower|slice:"-4:" == ".avi" %}video{% else %}image{% endif %}',                file: null,
+                fromDatabase: true,
+                deleted: false
+            },
+            {% endfor %}
+        ];
+        galleryFiles.push(...initialFiles);
+    
+        jenisSlider.select2({ dropdownParent: $('#manage_slider') });
+    
+        jenisSlider.on('select2:select', function (e) {
+            toggleSliderType(e.params.data.id);
+        });
+    
+        function toggleSliderType(value) {
+            imageSection.style.display = value === "image" ? "block" : "none";
+            videoSection.style.display = value === "video" ? "block" : "none";
+        }
+    
+        document.getElementById("manage_slider").addEventListener('hidden.bs.modal', function () {
+            resetModal();
+        });
+    
+        function resetModal() {
+            jenisSlider.val(null).trigger('change');
+            imageInput.value = '';
+            videoInput.value = '';
+            videoPreview.src = '';
+            videoPreview.style.display = 'none';
+            editingPreviewId = null;
+        }
+    
+        imageInput.addEventListener('change', function () {
+            if (this.files[0]) {
+                const url = URL.createObjectURL(this.files[0]);
+                // Optional: show preview
+            }
+        });
+    
+        videoInput.addEventListener('change', function () {
+            if (this.files[0]) {
+                const url = URL.createObjectURL(this.files[0]);
+                videoPreview.src = url;
+                videoPreview.style.display = 'block';
+            }
+        });
+    
+        addToPreviewBtn.addEventListener('click', function () {
+            const selectedType = jenisSlider.val();
+            let file = null;
+    
+            if (selectedType === "image" && imageInput.files.length > 0) {
+                file = imageInput.files[0];
+            } else if (selectedType === "video" && videoInput.files.length > 0) {
+                file = videoInput.files[0];
+            } else {
+                alert("Silakan pilih file terlebih dahulu.");
+                return;
+            }
+    
+            const url = URL.createObjectURL(file);
+            const badge = selectedType === "image"
+                ? `<span class="badge shadow-lg badge-light-info position-absolute top-0 start-0 m-2 z-index-2">Image</span>`
+                : `<span class="badge shadow-lg badge-light-primary position-absolute top-0 start-0 m-2 z-index-2">Video</span>`;
+    
+            const content = selectedType === "image"
+                ? `<div class="symbol symbol-175px symbol-2by3 overflow-hidden rounded-3"><img src="${url}" class="img-fluid"></div>`
+                : `<div style="width: 265.93px; height: 177.29px; overflow: hidden; border-radius: 10px;"><video controls style="width: 100%; height: 100%; object-fit: cover;"><source src="${url}" type="${file.type}"></video></div>`;
+    
+            if (editingPreviewId) {
+                const item = galleryFiles.find(x => x.id === editingPreviewId);
+                item.file = file;
+                item.type = selectedType;
+                item.deleted = false;
+
+                if (item.fromDatabase) {
+                    item.replaced = true; // TANDAI bahwa file lama diganti file baru
+                }
+    
+                const el = document.querySelector(`[data-preview-id="${editingPreviewId}"] .position-relative`);
+                el.innerHTML = badge + content;
+            } else {
+                const previewId = 'gallery-' + Date.now() + '-' + galleryCounter++;
+                galleryFiles.push({ id: previewId, type: selectedType, file, fromDatabase: false, deleted: false });
+    
+                const previewCol = document.createElement('div');
+                previewCol.className = 'col-sm-4 mb-6 gallery-preview-item';
+                previewCol.dataset.previewId = previewId;
+                previewCol.innerHTML = `
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex flex-column align-items-center p-3">
+                            <div class="position-relative mb-3">${badge}${content}</div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-light-primary" onclick="editGalleryPreview('${previewId}')">
+                                    <i class="ki-duotone ki-pencil"></i> Ubah
+                                </button>
+                                <button type="button" class="btn btn-sm btn-light-danger" onclick="removeGalleryPreview('${previewId}')">
+                                    <i class="ki-duotone ki-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                galleryPreview.appendChild(previewCol);
+            }
+    
+            manageSliderModal.hide();
+        });
+    
+        window.editGalleryPreview = function (previewId) {
+            const item = galleryFiles.find(x => x.id === previewId);
+            if (!item) return;
+    
+            editingPreviewId = previewId;
+            jenisSlider.val(item.type).trigger('change');
+            toggleSliderType(item.type);
+            manageSliderModal.show();
+        };
+    
+        window.removeGalleryPreview = function (previewId) {
+            const item = galleryFiles.find(x => x.id === previewId);
+            if (!item) return;
+    
+            item.deleted = true;
+    
+            const el = document.querySelector(`[data-preview-id="${previewId}"]`);
+            if (el) {
+                el.style.display = 'none'; // sembunyikan dari tampilan
+            }
+        };
+    
+        karyaForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+    
+            galleryFiles.forEach(item => {
+                if (!item.deleted) {
+                    if (item.fromDatabase && !item.replaced) {
+                        formData.append('existing_gallery_ids', item.id.replace('gallery-', ''));
+                    } else {
+                        formData.append('frm_gallery', item.file);
+                    }
+                }
+            });
+    
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(() => {
+                alert("Terjadi kesalahan saat mengirim data.");
+            });
+        });
+    });
+    
+    </script>
+    
+    
+{% endblock %}

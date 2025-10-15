@@ -1,0 +1,293 @@
+{% extends 'admin/layout/base.html' %}
+{% load static %}
+
+{% block main %}
+
+<style>
+    #contentChart {
+    height: 300px !important; /* atau sesuaikan, misal 250px, 400px */
+    max-height: 300px;
+}
+
+</style>
+<style>
+    .card-hover:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .bg-gradient-primary-hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    .avatar {
+        position: relative;
+        display: inline-block;
+    }
+    .avatar-status {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 20%;
+        height: 20%;
+        border-radius: 50%;
+        border: 2px solid #fff;
+    }
+</style>
+
+<div class="page-main">
+    <div class="app-content">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-gradient-primary-hover">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <span class="avatar avatar-xxl brround cover-image" 
+                                          style="background-image: url('https://via.placeholder.com/150')">
+                                        <span class="avatar-status bg-success"></span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h1 class="text-white mb-1">Welcome, <strong>{{ user.username }}</strong>!</h1>
+                                    <p class="text-white-75 mb-2">welcome back, have a nice day</p>
+                                    <div class="d-flex">
+                                        
+                                        <span class="badge bg-white text-primary">
+                                            <i class="ri-user-line me-1"></i> {{ user.role }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ms-auto">
+                                    <button class="btn btn-white btn-icon">
+                                        <i class="ri-notification-3-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik Card -->
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                    <div class="card bg-info img-card box-info-shadow">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="text-white">
+                                    <h2 class="mb-0 number-font text-fixed-white">{{ total_ebook }}</h2>
+                                    <p class="text-white mb-0 text-fixed-white">Total E-Book</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <i class="ri-book-2-line text-fixed-white fs-30 me-2 mt-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                    <div class="card bg-primary img-card box-primary-shadow">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="text-white">
+                                    <h2 class="mb-0 number-font text-fixed-white">{{ total_ecerpen }}</h2>
+                                    <p class="text-white mb-0 text-fixed-white">Total E-Cerpen</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <i class="ri-file-text-line text-fixed-white fs-30 me-2 mt-2"></i>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                    <div class="card bg-success img-card box-success-shadow">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="text-white">
+                                    <h2 class="mb-0 number-font text-fixed-white">{{ total_karya }}</h2>
+                                    <p class="text-white mb-0 text-fixed-white">Total Karya</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <i class="ri-artboard-line text-fixed-white fs-30 me-2 mt-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                    <div class="card bg-warning img-card box-warning-shadow">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="text-white">
+                                    <h2 class="mb-0 number-font text-fixed-white">{{ total_ebook|add:total_ecerpen|add:total_karya }}</h2>
+                                    <p class="text-white mb-0 text-fixed-white">Total Konten</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <i class="ri-stack-line text-fixed-white fs-30 me-2 mt-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+<!-- Chart -->
+<div class="row">
+    <!-- Line Chart (Statistik 30 Hari) -->
+    <div class="col-xl-8">
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="card-title">Statistik Upload Konten (7 Hari Terakhir)</div>
+            </div>
+            <div class="card-body">
+                <canvas id="contentChart" height="318"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pie Chart (Total Konten) -->
+    <div class="col-xl-4">
+        <div class="card custom-card h-100">
+            <div class="card-header">
+                <div class="card-title">Distribusi Total Konten</div>
+            </div>
+            <div class="card-body" style="position: relative; height: 300px;">
+                <canvas id="contentPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Line Chart
+        var ctx = document.getElementById('contentChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [
+                    {
+                        label: 'E-Book',
+                        data: {{ ebook_data|safe }},
+                        backgroundColor: 'rgba(113, 102, 242, 0.2)',
+                        borderColor: 'rgba(113, 102, 242, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'E-Cerpen',
+                        data: {{ ecerpen_data|safe }},
+                        backgroundColor: 'rgba(61, 194, 255, 0.2)',
+                        borderColor: 'rgba(61, 194, 255, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Karya',
+                        data: {{ karya_data|safe }},
+                        backgroundColor: 'rgba(103, 230, 191, 0.2)',
+                        borderColor: 'rgba(103, 230, 191, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Upload'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tanggal'
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Pie Chart
+        var pieCtx = document.getElementById('contentPieChart').getContext('2d');
+        var pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['E-Book', 'E-Cerpen', 'Karya'],
+                datasets: [{
+                    data: [
+                        {{ total_ebook }},  // Total E-Book
+                        {{ total_ecerpen }}, // Total E-Cerpen
+                        {{ total_karya }}     // Total Karya
+                    ],
+                    backgroundColor: [
+                        'rgba(113, 102, 242, 0.7)',
+                        'rgba(61, 194, 255, 0.7)',
+                        'rgba(103, 230, 191, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(113, 102, 242, 1)',
+                        'rgba(61, 194, 255, 1)',
+                        'rgba(103, 230, 191, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                var value = context.raw || 0;
+                                var percentage = Math.round((value / total) * 100);
+                                return label + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'admin/layout/base.html' %}
+{% load static %}
+
+{% block main %}
+<form method="post" enctype="multipart/form-data" class="form" action="{% url 'admin:edit_profile' user.user_id %}">
+    {% csrf_token %}
+<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+    <div class="d-flex flex-column flex-column-fluid">
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <!-- Profile Header Section -->
+            <div class="card mb-5 mb-xl-10">
+                <div class="card-body pt-9 pb-0">
+                    <div class="d-flex flex-wrap flex-sm-nowrap">
+                        <!-- Profile Picture -->
+                        <div class="me-7 mb-4">
+                            <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                {% if user.images %}
+                                    <img src="{{ user.images.url }}" alt="profile image" />
+                                {% else %}
+                                    <img src="{% static 'admin/assets/media/logos/VentraPlus.jpg' %}" alt="default image" />
+                                {% endif %}
+                                <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile Info -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="text-gray-900 text-hover-primary fs-2 fw-bold me-1">{{ user.username }}</span>
+                                        <a href="#">
+                                            <i class="ki-outline ki-verify fs-1 text-primary"></i>
+                                        </a>
+                                    </div>
+                                    <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
+                                        <span class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2">
+                                            <i class="ki-outline ki-profile-circle fs-4 me-1"></i>{{ user.get_role_display }}
+                                        </span>
+                                        <span class="d-flex align-items-center text-gray-500 text-hover-primary mb-2">
+                                            <i class="ki-outline ki-sms fs-4 me-1"></i>{{ user.email }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
+                        <li class="nav-item mt-2">
+                            <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'admin:index_profile' %}">Settings</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Profile Edit Form -->
+            <div class="card mb-5 mb-xl-10">
+                <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_profile_details" aria-expanded="true" aria-controls="kt_account_profile_details">
+                    <div class="card-title m-0">
+                        <h3 class="fw-bold m-0">Profile Details</h3>
+                    </div>
+                </div>
+                <div id="kt_account_settings_profile_details" class="collapse show">
+                    <form id="kt_account_profile_details_form" class="form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-body border-top p-9">
+                            <!-- Avatar Upload -->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
+                                <div class="col-lg-8">
+                                    <div class="image-input image-input-outline" data-kt-image-input="true">
+                                        <div class="image-input-wrapper w-125px h-125px" 
+                                             style="background-image: url('{% if user.images %}{{ user.images.url }}{% else %}{% static 'admin/assets/media/svg/avatars/blank.svg' %}{% endif %}')"></div>
+                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                            <i class="ki-outline ki-pencil fs-7"></i>
+                                            <input type="file" name="user_image" accept=".png, .jpg, .jpeg" />
+                                            <input type="hidden" name="avatar_remove" />
+                                        </label>
+                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                            <i class="ki-outline ki-cross fs-2"></i>
+                                        </span>
+                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                            <i class="ki-outline ki-cross fs-2"></i>
+                                        </span>
+                                    </div>
+                                    <div class="form-text">Allowed file types: png, jpg, jpeg.</div>
+                                </div>
+                            </div>
+
+                            <!-- Username Field -->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label required fw-semibold fs-6">Username</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="user_name" class="form-control form-control-lg form-control-solid" value="{{ user.username }}" />
+                                </div>
+                            </div>
+
+                            <!-- Email Field -->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label required fw-semibold fs-6">Email</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="email" name="user_email" class="form-control form-control-lg form-control-solid" value="{{ user.email }}" />
+                                </div>
+                            </div>
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label required fw-semibold fs-6">Password</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="password" name="user_password" class="form-control form-control-lg form-control-solid" placeholder="***" />
+                                </div>
+                            </div>
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-semibold fs-6">Tanggal Lahir</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="date" name="tanggal_lahir" class="form-control form-control-lg form-control-solid" 
+                                           value="{{ user.date_of_birth|date:'Y-m-d' }}" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="card-footer d-flex justify-content-end py-6 px-9">
+                            <!-- <button type="reset" class="btn btn-light btn-active-light-primary me-2">Discard</button> -->
+                            <button type="submit" class="btn btn-primary" id="kt_account_profile_details_submit">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Footer -->
+    <div id="kt_app_footer" class="app-footer d-flex flex-column flex-md-row align-items-center flex-center flex-md-stack py-2 py-lg-4">
+        <div class="text-gray-900 order-2 order-md-1">
+            <span class="text-muted fw-semibold me-1">2024&copy;</span>
+            <a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
+        </div>
+        <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+            <li class="menu-item">
+                <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
+            </li>
+            <li class="menu-item">
+                <a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
+            </li>
+            <li class="menu-item">
+                <a href="https://1.envato.market/Vm7VRE" target="_blank" class="menu-link px-2">Purchase</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</form>
+
+<!-- Add this script for the image upload functionality -->
+<script>
+    // Initialize image input
+    var avatar = new KTImageInput('kt_account_profile_details_form [data-kt-image-input="true"]');
+
+    // Handle form submission
+    document.getElementById('kt_account_profile_details_form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        this.submit();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VentraPlus - Register Creator</title>
+    <link rel="shortcut icon" href="{% static 'admin/assets/media/misc/bg ventra.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'app/assets/creator/assets/css/stylecahaya.css' %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  </head>
+  
+<body>
+  <form class="container" action="{% url 'app:register_creator' %}" method="post">
+    {% csrf_token %}
+    <h1 class="login-title">Register Creator</h1>
+
+    {% if messages %}
+      <ul>
+        {% for message in messages %}
+          <li style="color: red;">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <section class="input-box">
+      <input type="text" name="nama_creator" placeholder="Nama Lengkap" required />
+      <i class="fas fa-user"></i>
+    </section>
+
+    <section class="input-box">
+      <input type="email" name="email" placeholder="Email" required />
+      <i class="fas fa-envelope"></i>
+    </section>
+
+    <section class="input-box">
+      <input type="password" name="password" placeholder="Password" required />
+      <i class="fas fa-lock"></i>
+    </section>
+
+    <section class="input-box">
+      <input type="password" name="re_password" placeholder="Ulangi Password" required />
+      <i class="fas fa-lock"></i>
+    </section>
+
+    <!-- CAPTCHA Section -->
+    <section style="margin: 20px; margin-top: 40px;">
+      <div class="col-lg-12">
+        <div class="cf-turnstile" data-theme="light" data-sitekey="0x4AAAAAABeOdPjmC1W8n5tf"></div>
+      </div>
+    </section>
+
+    <button class="login-button" type="submit">Register</button>
+
+    <h5 class="dont-have-an-account">
+      Sudah punya akun? <a href="{% url 'app:login_creator' %}"><b>Login</b></a>
+    </h5>
+  </form>
+
+  <script src="{% static 'app/assets/creator/assets/js/cahaya.js' %}"></script>
+</body>
+</html>
+
+
